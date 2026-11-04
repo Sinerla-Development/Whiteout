@@ -2,11 +2,20 @@
 
 <h1 align="center">Whiteout</h1>
 
-<p align="center">An open source save editor for <b>The Long Dark</b>.<br>Windows and macOS. No account, no cloud.</p>
+<p align="center">An open source save editor for <b>The Long Dark</b>.<br>Windows, macOS and Linux. No account, no cloud.</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Windows-8E1B3A?style=for-the-badge" alt="Windows">
+  <img src="https://img.shields.io/badge/macOS-C7294F?style=for-the-badge" alt="macOS">
+  <img src="https://img.shields.io/badge/Linux-E6456C?style=for-the-badge" alt="Linux">
+  <img src="https://img.shields.io/badge/License-MIT-2b2b2b?style=for-the-badge" alt="MIT license">
+  <img src="https://img.shields.io/badge/Status-In%20development-E6A23C?style=for-the-badge" alt="In development">
+</p>
 
 <p align="center"><a href="https://whiteout.sinerla.fi/">whiteout.sinerla.fi</a></p>
 
-> **In development.** There is no download yet. The first release is coming soon. Follow the progress at [whiteout.sinerla.fi](https://whiteout.sinerla.fi/), or this page.
+> [!IMPORTANT]
+> **In development.** There is no download yet. The first release is coming soon, as a Windows installer, a macOS app and a Linux package (`.deb` and more). Follow the progress at [whiteout.sinerla.fi](https://whiteout.sinerla.fi/), or this page.
 
 ## What's coming
 
@@ -15,7 +24,10 @@
 - A list of changes to review before anything is written
 - Live updates when the game saves, and a warning for newer game versions
 - An interactive map with your own pins
-- Item kits and profiles you can export and share
+- Item icons and a filter, so you find what you need fast
+- Loadouts you build yourself, and profiles you can export and share
+- Your own data folder, so pins and loadouts can sync through iCloud, Google Drive or any other folder you already use
+- A check for new versions of Whiteout
 
 ## Early preview
 
