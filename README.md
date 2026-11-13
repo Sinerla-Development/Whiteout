@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/macOS-C7294F?style=for-the-badge" alt="macOS">
   <img src="https://img.shields.io/badge/Linux-E6456C?style=for-the-badge" alt="Linux">
   <img src="https://img.shields.io/badge/License-MIT-2b2b2b?style=for-the-badge" alt="MIT license">
-  <img src="https://img.shields.io/badge/Version-0.1.1-E6A23C?style=for-the-badge" alt="Version 0.1.1">
+  <img src="https://img.shields.io/badge/Version-0.1.0-E6A23C?style=for-the-badge" alt="Version 0.1.0">
 </p>
 
 <p align="center"><a href="https://whiteout.sinerla.fi/">whiteout.sinerla.fi</a></p>
