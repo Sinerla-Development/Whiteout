@@ -1,0 +1,472 @@
+id,name,category,amount_kind
+GEAR_BookMending,A Sewing Primer,Books,count
+GEAR_BookRifleFirearmAdvanced,Advanced Guns Guns Guns!,Books,count
+GEAR_BookCarcassHarvesting,"Field Dressing Your Kill, Vol. I",Books,count
+GEAR_BookRifleFirearm,Frontier Shooting Guide,Books,count
+GEAR_BookGunsmithing,Practical Gunsmithing,Books,count
+GEAR_BookRevolverFirearm,Small Arms Handbook,Books,count
+GEAR_BookArchery,Stay On Target,Books,count
+GEAR_BookFireStarting,Survive the Outdoors!,Books,count
+GEAR_BookIceFishing,The Frozen Angler,Books,count
+GEAR_BookCooking,Wilderness Kitchen,Books,count
+GEAR_AstridToque,Astrid Toque,Clothing,count
+GEAR_AstridBoots,Astrid's Boots,Clothing,count
+GEAR_AstridGloves,Astrid's Gloves,Clothing,count
+GEAR_AstridJacket,Astrid's Jacket,Clothing,count
+GEAR_AstridJeans,Astrid's Jeans,Clothing,count
+GEAR_AstridSweater,Astrid's Sweater,Clothing,count
+GEAR_Balaclava,Balaclava,Clothing,count
+GEAR_BallisticVest,Ballistic Vest,Clothing,count
+GEAR_BaseballCap,Baseball Cap,Clothing,count
+GEAR_BearSkinCoat,Bearskin Coat,Clothing,count
+GEAR_CargoPants,Cargo Pants,Clothing,count
+GEAR_MinersBoots,Chemical Boots,Clothing,count
+GEAR_ClimbingSocks,Climbing Socks,Clothing,count
+GEAR_CombatBoots,Combat Boots,Clothing,count
+GEAR_CombatPants,Combat Pants,Clothing,count
+GEAR_CottonScarf,Cotton Scarf,Clothing,count
+GEAR_BasicWoolHat,Cotton Toque,Clothing,count
+GEAR_CougarWrap,Cougar Hide Wrap,Clothing,count
+GEAR_CowichanSweater,Cowichan Sweater,Clothing,count
+GEAR_Crampons,Crampons,Clothing,count
+GEAR_DeerSkinCoat,Deer Skin Coat,Clothing,count
+GEAR_DeerSkinGloves,Deer Skin Gloves,Clothing,count
+GEAR_DeerSkinHat,Deer Skin Hat,Clothing,count
+GEAR_DeerSkinBoots,Deerskin Boots,Clothing,count
+GEAR_DeerSkinPants,Deerskin Pants,Clothing,count
+GEAR_DownVest,Down Vest,Clothing,count
+GEAR_CottonShirt,Dress Shirt,Clothing,count
+GEAR_BasicGloves,Driving Gloves,Clothing,count
+GEAR_PremiumWinterCoat,Expedition Parka,Clothing,count
+GEAR_FishermanSweater,Fisherman's Sweater,Clothing,count
+GEAR_WoolWrapCap,Fleece Cowl,Clothing,count
+GEAR_FleeceMittens,Fleece Mittens,Clothing,count
+GEAR_ToolBelt,Foreman's Tool Belt,Clothing,count
+GEAR_NewsprintBootStuffing,GAMEPLAY_NewsprintBootStuffing,Clothing,count
+GEAR_NewsprintInsulation,GAMEPLAY_NewsprintInsulationDescription,Clothing,count
+GEAR_Gauntlets,Gauntlets,Clothing,count
+GEAR_MinersHelmet,Hardhat,Clothing,count
+GEAR_HatLeatherAviatorA,Hat Leather Aviator A,Clothing,count
+GEAR_CottonHoodie,Hoodie,Clothing,count
+GEAR_ImprovisedCrampons,Improvised Crampons,Clothing,count
+GEAR_BedRoll_Down,Improvised Down Bedroll,Clothing,count
+GEAR_ImprovisedMittens,Improvised Hand Wraps,Clothing,count
+GEAR_ImprovisedHat,Improvised Head Wrap,Clothing,count
+GEAR_ImprovisedDownInsulation,Improvised Insulation,Clothing,count
+GEAR_InsulatedBoots,Insulated Boots,Clothing,count
+GEAR_JacketLeatherFlightA,Jacket Leather Flight A,Clothing,count
+GEAR_Jeans,Jeans,Clothing,count
+GEAR_JerseyHockeyA,Jersey Hockey A,Clothing,count
+GEAR_LeatherShoes,Leather Shoes,Clothing,count
+GEAR_SkiJacket,Light Shell,Clothing,count
+GEAR_WoolWrap,Long Wool Scarf,Clothing,count
+GEAR_WillBoots,Mackenzie's Boots,Clothing,count
+GEAR_WillBootsStart,Mackenzie's Boots (Start),Clothing,count
+GEAR_WillPants,Mackenzie's Pants,Clothing,count
+GEAR_WillPantsStart,Mackenzie's Pants (Start),Clothing,count
+GEAR_WillParka,Mackenzie's Parka,Clothing,count
+GEAR_WillShirt,Mackenzie's Shirt,Clothing,count
+GEAR_WillShirtStart,Mackenzie's Shirt (Start),Clothing,count
+GEAR_WillSweater,Mackenzie's Sweater,Clothing,count
+GEAR_WillSweaterStart,Mackenzie's Sweater (Start),Clothing,count
+GEAR_WillToque,Mackenzie's Toque,Clothing,count
+GEAR_MackinawJacket,Mackinaw Jacket,Clothing,count
+GEAR_QualityWinterCoat,Mariner's Pea Coat,Clothing,count
+GEAR_MilitaryParka,Military Coat,Clothing,count
+GEAR_MinersJacket,Miner's Jacket,Clothing,count
+GEAR_MinersPants,Miner's Pants,Clothing,count
+GEAR_MittenBlueStripe,Mitten Blue Stripe,Clothing,count
+GEAR_MittenBrownStripe,Mitten Brown Stripe,Clothing,count
+GEAR_MittenBurgundyPattern,Mitten Burgundy Pattern,Clothing,count
+GEAR_MooseHideCloak,Moose-Hide Cloak,Clothing,count
+GEAR_MooseHideBag,Moose-Hide Satchel,Clothing,count
+GEAR_GreyMotherBoots,Mountaineering Boots,Clothing,count
+GEAR_MuklukBoots,Mukluks,Clothing,count
+GEAR_HeavyParka,Old Fashioned Parka,Clothing,count
+GEAR_PlaidShirt,Plaid Shirt,Clothing,count
+GEAR_RabbitskinHat,Rabbitskin Hat,Clothing,count
+GEAR_RabbitSkinMittens,Rabbitskin Mitts,Clothing,count
+GEAR_Respirator,Respirator,Clothing,count
+GEAR_BasicShoes,Running Shoes,Clothing,count
+GEAR_LightParka,Simple Parka,Clothing,count
+GEAR_SkiBoots,Ski Boots,Clothing,count
+GEAR_SkiGloves,Ski Gloves,Clothing,count
+GEAR_DownSkiJacket,Ski Jacket,Clothing,count
+GEAR_InsulatedPants,Snow Pants,Clothing,count
+GEAR_SockDots,Sock Dots,Clothing,count
+GEAR_SockMoose,Sock Moose,Clothing,count
+GEAR_SockPlaid,Sock Plaid,Clothing,count
+GEAR_InsulatedVest,Sport Vest,Clothing,count
+GEAR_CottonSocks,Sports Socks,Clothing,count
+GEAR_CottonSocksStart,Sports Socks (Start),Clothing,count
+GEAR_SweaterChristmasA,Sweater Christmas A,Clothing,count
+GEAR_FleeceSweater,Sweatshirt,Clothing,count
+GEAR_TeeShirt,T-Shirt,Clothing,count
+GEAR_TShirtCM,T-Shirt,Clothing,count
+GEAR_TShirtGBI,T-Shirt,Clothing,count
+GEAR_TShirtSnappy,T-Shirt,Clothing,count
+GEAR_TacticalGloves,Tactical Gloves,Clothing,count
+GEAR_TacticalJacket,Tactical Jacket,Clothing,count
+GEAR_HatGatorBalaclavaA,Technical Balaclava,Clothing,count
+GEAR_LongUnderwear,Thermal Underwear,Clothing,count
+GEAR_LongUnderwearStart,Thermal Underwear (Start),Clothing,count
+GEAR_HeavyWoolSweater,Thick Wool Sweater,Clothing,count
+GEAR_WoolSweater,Thin Wool Sweater,Clothing,count
+GEAR_BasicBoots,Trail Boots,Clothing,count
+GEAR_DownParka,Urban Parka,Clothing,count
+GEAR_BasicWinterCoat,Windbreaker,Clothing,count
+GEAR_WolfSkinCape,Wolfskin Coat,Clothing,count
+GEAR_WolfSkinHat,Wolfskin Hat,Clothing,count
+GEAR_WolfSkinPant,Wolfskin Pants,Clothing,count
+GEAR_EarMuffs,Wool Ear Wrap,Clothing,count
+GEAR_LongUnderwearWool,Wool Longjohns,Clothing,count
+GEAR_Mittens,Wool Mittens,Clothing,count
+GEAR_BasicWoolScarf,Wool Scarf,Clothing,count
+GEAR_WoolShirt,Wool Shirt,Clothing,count
+GEAR_WoolSocks,Wool Socks,Clothing,count
+GEAR_Toque,Wool Toque,Clothing,count
+GEAR_WorkBoots,Work Boots,Clothing,count
+GEAR_WorkGloves,Work Gloves,Clothing,count
+GEAR_WorkPants,Work Pants,Clothing,count
+GEAR_BottleAntibiotics,Antibiotics,FirstAid,stack
+GEAR_BottleHydrogenPeroxide,Antiseptic,FirstAid,liters
+GEAR_HeavyBandage,Bandage,FirstAid,stack
+GEAR_BirchbarkTea,Birch Bark Tea,FirstAid,kcal
+GEAR_BottleCaffeine,Bottle Caffeine,FirstAid,count
+GEAR_BottleVitaminC,Bottle Vitamin C,FirstAid,count
+GEAR_EmergencyStim,Emergency Stim,FirstAid,count
+GEAR_SodaEnergy,Go! Energy Drink,FirstAid,kcal
+GEAR_HeatPad,Heat Pack,FirstAid,count
+GEAR_OldMansBeardDressing,Old Man's Beard Wound Dressing,FirstAid,stack
+GEAR_BottlePainKillers,Painkillers,FirstAid,stack
+GEAR_BirchbarkPrepared,Prepared Birch Bark ,FirstAid,stack
+GEAR_ReishiPrepared,Prepared Reishi Mushrooms,FirstAid,stack
+GEAR_RosehipsPrepared,Prepared Rose hips,FirstAid,stack
+GEAR_WaterPurificationTablets,Water Purification Tablets,FirstAid,stack
+GEAR_AcornGrounds,Acorn Grounds,Food,count
+GEAR_Acorn,Acorns,Food,count
+GEAR_AcornCookedBig,Acorns (Cooked - Large Portion),Food,count
+GEAR_AcornCooked,Acorns (Cooked),Food,count
+GEAR_AirlineFoodChick,Airline Food - Chicken,Food,kcal
+GEAR_AirlineFoodVeg,Airline Food - Vegetarian,Food,kcal
+GEAR_AnimalFat,Animal Fat,Food,kcal
+GEAR_CookedMeatBear,Bear Meat (Cooked),Food,kcal
+GEAR_BearQuarter,Bear Quarter,Food,count
+GEAR_BeefJerky,Beef Jerky,Food,kcal
+GEAR_RawMeatBear,Black Bear Meat,Food,kcal
+GEAR_Broth,Broth,Food,kcal
+GEAR_CookedBurbot,Burbot (Cooked),Food,count
+GEAR_RawBurbot,Burbot (Raw),Food,count
+GEAR_Burdock,Burdock Root,Food,count
+GEAR_BurdockTea,Burdock Tea,Food,count
+GEAR_CandyBar,Candy Bar,Food,kcal
+GEAR_CannedBeansB,Canned Beans B,Food,count
+GEAR_CannedCorn,Canned Corn,Food,count
+GEAR_CannedHam,Canned Ham,Food,count
+GEAR_CannedPeasAndCarrots,Canned Peas And Carrots,Food,count
+GEAR_CannedPineapple,Canned Pineapple,Food,count
+GEAR_Carrot,Carrot,Food,count
+GEAR_CattailStalk,Cat Tail Stalk,Food,stack
+GEAR_Cereal_A,Cereal A,Food,count
+GEAR_Cereal_B,Cereal B,Food,count
+GEAR_CookedCohoSalmon,Coho Salmon (Cooked),Food,kcal
+GEAR_RawCohoSalmon,Coho Salmon (Raw),Food,kcal
+GEAR_CondensedMilk,Condensed Milk,Food,kcal
+GEAR_CookedBannock,Cooked Bannock,Food,count
+GEAR_CookedBannockAcorn,Cooked Bannock Acorn,Food,count
+GEAR_CookedBarPemmican,Cooked Bar Pemmican,Food,count
+GEAR_CookedFishcakes,Cooked Fishcakes,Food,count
+GEAR_CookedMeatPtarmigan,Cooked Meat Ptarmigan,Food,count
+GEAR_CookedPancake,Cooked Pancake,Food,count
+GEAR_CookedPancakeAcorn,Cooked Pancake Acorn,Food,count
+GEAR_CookedPancakePeach,Cooked Pancake Peach,Food,count
+GEAR_CookedPieFishermans,Cooked Pie Fishermans,Food,count
+GEAR_CookedPieForagers,Cooked Pie Foragers,Food,count
+GEAR_CookedPieMeat,Cooked Pie Meat,Food,count
+GEAR_CookedPiePeach,Cooked Pie Peach,Food,count
+GEAR_CookedPiePredator,Cooked Pie Predator,Food,count
+GEAR_CookedPiePtarmigan,Cooked Pie Ptarmigan,Food,count
+GEAR_CookedPieRabbit,Cooked Pie Rabbit,Food,count
+GEAR_CookedPieRoseHip,Cooked Pie Rose Hip,Food,count
+GEAR_CookedPieVenison,Cooked Pie Venison,Food,count
+GEAR_CookedPorridge,Cooked Porridge,Food,count
+GEAR_CookedPorridgeFruit,Cooked Porridge Fruit,Food,count
+GEAR_CookedSoupPotato,Cooked Soup Potato,Food,count
+GEAR_CookedSoupPtarmigan,Cooked Soup Ptarmigan,Food,count
+GEAR_CookedSoupRabbit,Cooked Soup Rabbit,Food,count
+GEAR_CookedStewMeat,Cooked Stew Meat,Food,count
+GEAR_CookedStewPtarmigan,Cooked Stew Ptarmigan,Food,count
+GEAR_CookedStewRabbit,Cooked Stew Rabbit,Food,count
+GEAR_CookedStewTrout,Cooked Stew Trout,Food,count
+GEAR_CookedStewVegetables,Cooked Stew Vegetables,Food,count
+GEAR_CookedStewVenison,Cooked Stew Venison,Food,count
+GEAR_CookingOil,Cooking Oil,Food,liters
+GEAR_CougarCarcass,Cougar Carcass,Food,count
+GEAR_CougarClaw,Cougar Claw,Food,count
+GEAR_CougarClawKnife,Cougar Claw Knife,Food,count
+GEAR_CookedMeatCougar,Cougar Meat (Cooked),Food,count
+GEAR_RawMeatCougar,Cougar Meat (Raw),Food,count
+GEAR_CougarQuarter,Cougar Quarter,Food,count
+GEAR_AcornCoffeeCup,Cup of Acorn Coffee,Food,count
+GEAR_CoffeeCup,Cup of Coffee,Food,kcal
+GEAR_GreenTeaCup,Cup of Herbal Tea,Food,kcal
+GEAR_CougarHideDried,Cured Cougar Hide,Food,count
+GEAR_CuredFish,Cured Fish,Food,count
+GEAR_CuredMeat,Cured Meat,Food,count
+GEAR_StagQuarter,Deer Quarter,Food,count
+GEAR_DogFood,Dog Food,Food,kcal
+GEAR_DriedApples,Dried Apples,Food,count
+GEAR_DriedMangos,Dried Mangos,Food,count
+GEAR_EnergyBar,Energy Bar,Food,kcal
+GEAR_PtarmiganFeathers,Feathers,Food,count
+GEAR_CougarHide,Fresh Cougar Hide,Food,count
+GEAR_CookedGoldeye,Goldeye (Cooked),Food,count
+GEAR_RawGoldeye,Goldeye (Raw),Food,count
+GEAR_GranolaBar,Granola Bar,Food,kcal
+GEAR_GreenTeaPackage,Herbal Tea,Food,stack
+GEAR_HomeMadeSoup,Home-made Soup,Food,kcal
+GEAR_KetchupChips,Ketchup Chips,Food,kcal
+GEAR_CookedLakeWhiteFish,Lake Whitefish (Cooked),Food,kcal
+GEAR_RawLakeWhiteFish,Lake Whitefish (Raw),Food,kcal
+GEAR_MapleSyrup,Maple Syrup,Food,kcal
+GEAR_MRE,Military-Grade MRE,Food,kcal
+GEAR_RawMeatMoose,Moose Meat,Food,kcal
+GEAR_CookedMeatMoose,Moose Meat (Cooked),Food,kcal
+GEAR_MooseQuarter,Moose Quarter,Food,count
+GEAR_SodaOrange,Orange Soda,Food,kcal
+GEAR_PeanutButter,Peanut Butter,Food,kcal
+GEAR_Pickled_Eggs,Pickled Eggs,Food,count
+GEAR_Pickled_Onions,Pickled Onions,Food,count
+GEAR_Pickles,Pickles,Food,count
+GEAR_PinnacleCanPeaches,Pinnacle Peaches,Food,kcal
+GEAR_CannedBeans,Pork and Beans,Food,kcal
+GEAR_PotatoCooked,Potato Cooked,Food,count
+GEAR_AcornShelled,Prepared Acorns,Food,count
+GEAR_AcornShelledBig,Prepared Acorns (Large Portion),Food,count
+GEAR_BurdockPrepared,Prepared Burdock,Food,count
+GEAR_PtarmiganCarcass,Ptarmigan Carcass,Food,count
+GEAR_RawMeatRabbit,Rabbit  (Raw),Food,kcal
+GEAR_CookedMeatRabbit,Rabbit (Cooked),Food,kcal
+GEAR_RabbitCarcass,Rabbit Carcass,Food,count
+GEAR_CookedRainbowTrout,Rainbow Trout (Cooked),Food,kcal
+GEAR_RawRainbowTrout,Rainbow Trout (Raw),Food,kcal
+GEAR_RawMeatPtarmigan,Raw Meat Ptarmigan,Food,count
+GEAR_CookedRedIrishLord,Red Irish Lord (Cooked),Food,count
+GEAR_RawRedIrishLord,Red Irish Lord (Raw),Food,count
+GEAR_ReishiTea,Reishi Tea,Food,kcal
+GEAR_CookedRockfish,Rockfish (Cooked),Food,count
+GEAR_RawRockfish,Rockfish (Raw),Food,count
+GEAR_RoseHipTea,Rose Hip Tea,Food,kcal
+GEAR_Crackers,Salty Crackers,Food,kcal
+GEAR_CookedSmallMouthBass,Smallmouth Bass (Cooked),Food,kcal
+GEAR_RawSmallMouthBass,Smallmouth Bass (Raw),Food,kcal
+GEAR_SodaGrape,Stacy's Grape Soda,Food,kcal
+GEAR_Soda,Summit Soda,Food,kcal
+GEAR_TimberwolfQuarter,Timberwolf Quarter,Food,count
+GEAR_CoffeeTin,Tin of Coffee,Food,stack
+GEAR_CannedSardines,Tin of Sardines,Food,kcal
+GEAR_TomatoSoupCan,Tomato Soup,Food,kcal
+GEAR_UncookedBannock,Uncooked Bannock,Food,count
+GEAR_UncookedBannockAcorn,Uncooked Bannock Acorn,Food,count
+GEAR_UncookedBarPemmican,Uncooked Bar Pemmican,Food,count
+GEAR_UncookedBroth,Uncooked Broth,Food,count
+GEAR_UncookedFishcakes,Uncooked Fishcakes,Food,count
+GEAR_UncookedOil,Uncooked Oil,Food,count
+GEAR_UncookedPancake,Uncooked Pancake,Food,count
+GEAR_UncookedPancakeAcorn,Uncooked Pancake Acorn,Food,count
+GEAR_UncookedPancakePeach,Uncooked Pancake Peach,Food,count
+GEAR_UncookedPieFishermans,Uncooked Pie Fishermans,Food,count
+GEAR_UncookedPieForagers,Uncooked Pie Foragers,Food,count
+GEAR_UncookedPieMeat,Uncooked Pie Meat,Food,count
+GEAR_UncookedPiePeach,Uncooked Pie Peach,Food,count
+GEAR_UncookedPiePredator,Uncooked Pie Predator,Food,count
+GEAR_UncookedPiePtarmigan,Uncooked Pie Ptarmigan,Food,count
+GEAR_UncookedPieRabbit,Uncooked Pie Rabbit,Food,count
+GEAR_UncookedPieRoseHip,Uncooked Pie Rose Hip,Food,count
+GEAR_UncookedPieVenison,Uncooked Pie Venison,Food,count
+GEAR_UncookedPorridge,Uncooked Porridge,Food,count
+GEAR_UncookedPorridgeFruit,Uncooked Porridge Fruit,Food,count
+GEAR_UncookedSoupPotato,Uncooked Soup Potato,Food,count
+GEAR_UncookedSoupPtarmigan,Uncooked Soup Ptarmigan,Food,count
+GEAR_UncookedSoupRabbit,Uncooked Soup Rabbit,Food,count
+GEAR_UncookedStewMeat,Uncooked Stew Meat,Food,count
+GEAR_UncookedStewPtarmigan,Uncooked Stew Ptarmigan,Food,count
+GEAR_UncookedStewRabbit,Uncooked Stew Rabbit,Food,count
+GEAR_UncookedStewTrout,Uncooked Stew Trout,Food,count
+GEAR_UncookedStewVegetables,Uncooked Stew Vegetables,Food,count
+GEAR_UncookedStewVenison,Uncooked Stew Venison,Food,count
+GEAR_CookedMeatDeer,Venison (Cooked),Food,kcal
+GEAR_RawMeatDeer,Venison (Raw),Food,kcal
+GEAR_Water1000ml,Water Bottle,Food,liters
+GEAR_Water500ml,Water Bottle,Food,liters
+GEAR_WolfCarcass,Wolf Carcass,Food,count
+GEAR_CookedMeatWolf,Wolf Meat (Cooked),Food,kcal
+GEAR_RawMeatWolf,Wolf Meat (Raw),Food,kcal
+GEAR_WolfQuarter,Wolf Quarter,Food,count
+GEAR_AccelerantGunpowder,Accelerant Gunpowder,Materials,count
+GEAR_ArrowManufacturedHead,Arrow Manufactured Head,Materials,count
+GEAR_ArrowManufacturedShaft,Arrow Manufactured Shaft,Materials,count
+GEAR_ArrowHead,Arrowhead,Materials,stack
+GEAR_BarkTinder,Birch Bark,Materials,stack
+GEAR_BookA,Book,Materials,stack
+GEAR_BowString,Bow String,Materials,stack
+GEAR_BowWood,Bow Wood,Materials,stack
+GEAR_BrokenArrowHardened,Broken Fire Hardened Arrow,Materials,count
+GEAR_BrokenArrowManufactured,Broken Manufactured Arrow,Materials,count
+GEAR_Canister,Canister,Materials,count
+GEAR_CattailTinder,Cat Tail Head,Materials,stack
+GEAR_Softwood,Cedar Firewood,Materials,stack
+GEAR_Cloth,Cloth,Materials,stack
+GEAR_Coal,Coal,Materials,stack
+GEAR_CrowFeather,Crow Feather,Materials,stack
+GEAR_BirchSaplingDried,Cured Birch Sapling,Materials,stack
+GEAR_BearHideDried,Cured Black Bear Hide,Materials,stack
+GEAR_LeatherHideDried,Cured Deer Hide,Materials,stack
+GEAR_GutDried,Cured Gut,Materials,stack
+GEAR_LeatherDried,Cured Leather,Materials,stack
+GEAR_MapleSaplingDried,Cured Maple Sapling,Materials,stack
+GEAR_MooseHideDried,Cured Moose Hide,Materials,stack
+GEAR_RabbitPeltDried,Cured Rabbit Pelt,Materials,stack
+GEAR_WolfPeltDried,Cured Wolf Pelt,Materials,stack
+GEAR_DustingSulfur,Dusting Sulfur,Materials,count
+GEAR_FilmBoxBW,Film Box BW,Materials,stack
+GEAR_FilmBoxColour,Film Box Colour,Materials,stack
+GEAR_FilmBoxSepia,Film Box Sepia,Materials,stack
+GEAR_Hardwood,Fir Firewood,Materials,stack
+GEAR_ArrowHardened,Fire Hardened Arrow,Materials,count
+GEAR_Firelog,Firelog,Materials,stack
+GEAR_FishingBaitA,Fishing Bait A,Materials,count
+GEAR_BearHide,Fresh Black Bear Hide,Materials,stack
+GEAR_LeatherHide,Fresh Deer Hide,Materials,stack
+GEAR_Gut,Fresh Gut,Materials,stack
+GEAR_Leather,Fresh Leather,Materials,stack
+GEAR_MooseHide,Fresh Moose Hide,Materials,stack
+GEAR_RabbitPelt,Fresh Rabbit Pelt,Materials,stack
+GEAR_WolfPelt,Fresh Wolf Pelt,Materials,stack
+GEAR_Fuse,Fuse,Materials,stack
+GEAR_BirchSapling,Green Birch Sapling,Materials,stack
+GEAR_MapleSapling,Green Maple Sapling,Materials,stack
+GEAR_KnifeScrapMetal_Clean,Knife Scrap Metal Clean,Materials,stack
+GEAR_Newsprint,Newsprint,Materials,stack
+GEAR_OldMansBeardHarvested,Old Man's Beard Lichen,Materials,stack
+GEAR_ReclaimedWoodB,Reclaimed Wood,Materials,stack
+GEAR_ReishiMushroom,Reishi Mushroom,Materials,stack
+GEAR_RoseHip,Rose Hip,Materials,stack
+GEAR_ScrapLead,Scrap Lead,Materials,stack
+GEAR_ScrapMetal,Scrap Metal,Materials,stack
+GEAR_PaperStack,Stack of Papers,Materials,stack
+GEAR_Stick,Stick,Materials,stack
+GEAR_StumpRemover,Stump Remover,Materials,count
+GEAR_Tinder,Tinder Plug,Materials,stack
+GEAR_WireBundle,Wire Bundle,Materials,stack
+GEAR_Accelerant,Accelerant,Tools,stack
+GEAR_ArrowShaft,Arrow Shaft,Tools,stack
+GEAR_AstridBackPack_hangar,Astrid's Backpack,Tools,count
+GEAR_HardCase_hangar,Astrid's Hardcase,Tools,count
+GEAR_Rifle_Barbs,Barb's Rifle,Tools,count
+GEAR_BearSkinBedRoll,Bear Skin Bedroll,Tools,count
+GEAR_BearSpear,Bear Spear,Tools,count
+GEAR_BedRoll,Bedroll,Tools,count
+GEAR_BoltCutters,Bolt Cutters,Tools,count
+GEAR_Bow_Manufactured,Bow Manufactured,Tools,count
+GEAR_Brand,Brand,Tools,count
+GEAR_BrokenArrow,Broken Arrow,Tools,stack
+GEAR_Bullet,Bullet,Tools,stack
+GEAR_Rifle_Trader,Bunker RIfle,Tools,count
+GEAR_Bow_Bushcraft,Bushcraft Bow,Tools,count
+GEAR_Camera,Camera,Tools,count
+GEAR_GunpowderCan,Can of Gunpowder,Tools,count
+GEAR_CanOpener,Can Opener,Tools,count
+GEAR_CarBattery,Car Battery,Tools,count
+GEAR_PackMatches,Cardboard Matches,Tools,stack
+GEAR_Charcoal,Charcoal,Tools,stack
+GEAR_CookingPot,Cooking Pot,Tools,count
+GEAR_Rifle_Curators,Curator’s Rifle,Tools,count
+GEAR_FlareGun,Distress Pistol,Tools,count
+GEAR_FlareGunCase_hangar,Distress Pistol Kit,Tools,count
+GEAR_FoodSupplies_hangar,Emergency Food,Tools,count
+GEAR_FireAxe,Fire Axe,Tools,count
+GEAR_RifleCleaningKit,Firearm Cleaning Kit,Tools,count
+GEAR_Firestriker,Firestriker,Tools,count
+GEAR_MedicalSupplies_hangar,First Aid Kit,Tools,count
+GEAR_FishingLureA,Fishing Lure A,Tools,count
+GEAR_FishingLureB,Fishing Lure B,Tools,count
+GEAR_FishingLureC,Fishing Lure C,Tools,count
+GEAR_FishingLureD,Fishing Lure D,Tools,count
+GEAR_HookAndLine,Fishing Tackle,Tools,count
+GEAR_TipUp,Fishing Tip-Up,Tools,count
+GEAR_FlareA,Flare,Tools,count
+GEAR_FlareGunAmmoSingle,Flare Shell,Tools,stack
+GEAR_Flashlight,Flashlight,Tools,count
+GEAR_Flashlight_LongLasting,Flashlight Long Lasting,Tools,count
+GEAR_Flour,Flour,Tools,count
+GEAR_RevolverGreen,Forester's Revolver,Tools,count
+GEAR_BearSpearBroken,GAMEPLAY_BearSpearBrokenDescription,Tools,count
+GEAR_Hacksaw,Hacksaw,Tools,count
+GEAR_HandheldShortwave,Handheld Shortwave,Tools,count
+GEAR_Hatchet,Hatchet,Tools,count
+GEAR_Hammer,Heavy Hammer,Tools,count
+GEAR_Hook,Hook,Tools,stack
+GEAR_RevolverFancy,Hunter's Revolver,Tools,count
+GEAR_Knife,Hunting Knife,Tools,count
+GEAR_Rifle,Hunting Rifle,Tools,count
+GEAR_RifleHuntingLodge,Hunting Rifle,Tools,count
+GEAR_HatchetImprovised,Improvised Hatchet,Tools,count
+GEAR_KnifeImprovised,Improvised Knife,Tools,count
+GEAR_InsulatedFlask_A,Insulated Flask A,Tools,count
+GEAR_InsulatedFlask_B,Insulated Flask B,Tools,count
+GEAR_InsulatedFlask_C,Insulated Flask C,Tools,count
+GEAR_InsulatedFlask_D,Insulated Flask D,Tools,count
+GEAR_InsulatedFlask_E,Insulated Flask E,Tools,count
+GEAR_InsulatedFlask_F,Insulated Flask F,Tools,count
+GEAR_InsulatedFlask_G,Insulated Flask G,Tools,count
+GEAR_JeremiahKnife,Jeremiah's Knife,Tools,count
+GEAR_JerrycanRusty,Jerry Can,Tools,liters
+GEAR_LampFuel,Lantern Fuel,Tools,liters
+GEAR_LampFuelFull,Lantern Fuel,Tools,liters
+GEAR_Line,Line,Tools,stack
+GEAR_MagnifyingLens,Magnifying Lens,Tools,count
+GEAR_ArrowManufactured,Manufactured Arrow,Tools,count
+GEAR_BlueFlare,Marine Flare,Tools,count
+GEAR_WhaleOilHeater,McLeod Ultra-Efficiency Whale Oil Heater,Tools,count
+GEAR_Rope,Mountaineering Rope,Tools,stack
+GEAR_NewsprintRoll,Newsprint Roll,Tools,stack
+GEAR_NoiseMaker,Noise Maker,Tools,count
+GEAR_OatsTin,Oats Tin,Tools,count
+GEAR_Potato,Potato,Tools,count
+GEAR_Prybar,Prybar,Tools,count
+GEAR_HighQualityTools,Quality Tools,Tools,count
+GEAR_RecycledCan,Recycled Can,Tools,count
+GEAR_Revolver,Revolver,Tools,count
+GEAR_RevolverAmmoBox,Revolver Ammunition,Tools,stack
+GEAR_RevolverAmmoSingle,Revolver Cartridge,Tools,stack
+GEAR_RevolverAmmoCasing,Revolver Shell Casing,Tools,stack
+GEAR_RifleAmmoBox,Rifle Ammunition,Tools,stack
+GEAR_RifleAmmoSingle,Rifle Cartridge,Tools,stack
+GEAR_RifleAmmoCasing,Rifle Shell Casing,Tools,stack
+GEAR_Rifle_Vaughns,Rifle Vaughns,Tools,count
+GEAR_Salt,Salt,Tools,count
+GEAR_SaltBag,Salt Bag,Tools,count
+GEAR_KnifeScrapMetal,Scrap Metal Shard,Tools,count
+GEAR_RifleScabbardA,Security Chief's Rifle Holster,Tools,count
+GEAR_SewingKit,Sewing Kit,Tools,count
+GEAR_Arrow,Simple Arrow,Tools,stack
+GEAR_SimpleTools,Simple Tools,Tools,count
+GEAR_Skillet,Skillet,Tools,count
+GEAR_Snare,Snare,Tools,count
+GEAR_SpearHead,Spear Head,Tools,count
+GEAR_KeroseneLamp_Spelunkers,Spelunker’s Lantern,Tools,count
+GEAR_SprayPaintCan,Spray Paint,Tools,count
+GEAR_Stone,Stone,Tools,stack
+GEAR_KeroseneLampB,Storm Lantern,Tools,liters
+GEAR_Bow,Survival Bow,Tools,count
+GEAR_SurvivalKnife,Survival Knife,Tools,count
+GEAR_Torch,Torch,Tools,count
+GEAR_Travois,Travois,Tools,count
+GEAR_RevolverStubNosed,Warden's Revolver,Tools,count
+GEAR_WhaleOilCan,Whale Oil Can,Tools,count
+GEAR_SharpeningStone,Whetstone,Tools,count
+GEAR_WoodMatches,Wood Matches,Tools,stack
+GEAR_WoodworkingTools,Woodworking Tools,Tools,count
+GEAR_Bow_Woodwrights,Woodwright’s Bow,Tools,count
+GEAR_Vice,Workbench Vice,Tools,count

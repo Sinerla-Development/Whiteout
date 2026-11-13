@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>Whiteout</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="editor.css">
+<link rel="stylesheet" href="desktop.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div id="appShell">
+<header class="top">
+  <span class="brand"><svg viewBox="0 0 1024 1024" fill="currentColor" aria-hidden="true" focusable="false"><path d="M520 250C532 372 650 430 650 586c0 84-60 138-138 138s-138-54-138-138c0-74 46-114 72-186 16 42 36 62 52 52 14-42-4-120 22-202z"/><rect x="300" y="742" width="424" height="64" rx="32" transform="rotate(-9 512 774)"/><rect x="300" y="742" width="424" height="64" rx="32" transform="rotate(9 512 774)"/></svg><span>Whiteout</span></span>
+  <div class="viewbar">
+  <nav class="modes" aria-label="View">
+    <button type="button" class="mode" data-mode="edit" aria-current="page">Editor</button>
+    <button type="button" class="mode" data-mode="map">Map</button>
+  </nav>
+  <button type="button" id="followBtn" class="follow" aria-pressed="false" title="The map switches when the player changes region">Follow player</button>
+  </div>
+  <div class="top-actions">
+    <span id="gameChip" class="gamechip" data-state="unknown" role="status" title="Checking whether the game is running"><span class="dot" aria-hidden="true"></span><span id="gameChipText">Game ?</span></span>
+    <button id="slotsBtn" type="button" class="ico" title="Game saves" aria-label="Game saves"><span class="btn-label">Saves</span></button>
+    <button id="settingsBtn" type="button" class="ico iconbtn" title="Settings" aria-label="Settings"></button>
+  </div>
+</header>
+<div id="liveBar" class="livebar" role="status" hidden>
+  <span id="liveText"></span>
+  <span class="live-actions">
+    <button id="liveDiffBtn" type="button" class="ghost" hidden>What changed?</button>
+    <button id="liveReloadBtn" type="button" hidden>Load latest</button>
+    <button id="liveKeepBtn" type="button" class="ghost" hidden>Keep my changes</button>
+    <button id="liveCloseBtn" type="button" class="ghost">Close</button>
+  </span>
+</div>
+<div id="dataBar" class="livebar warn" role="alert" hidden>
+  <span id="dataText"></span>
+  <span class="live-actions">
+    <button id="dataRetryBtn" type="button">Try again</button>
+    <button id="dataSetBtn" type="button" class="ghost">Settings</button>
+  </span>
+</div>
+<div id="updateAskBar" class="livebar" role="status" hidden>
+  <span>Check for Whiteout updates once a day? Whiteout then connects to GitHub, which sees your IP address.</span>
+  <span class="live-actions">
+    <button id="updateAskYes" type="button" class="primary">Check automatically</button>
+    <button id="updateAskNo" type="button" class="ghost">Not now</button>
+  </span>
+</div>
+<div id="updateBar" class="livebar" role="status" hidden>
+  <span id="updateText"></span>
+  <span class="live-actions">
+    <button id="updateInstallBtn" type="button" class="primary">Install</button>
+    <button id="updateLaterBtn" type="button" class="ghost">Later</button>
+    <button id="updateNotesBtn" type="button" class="ghost">Release notes</button>
+  </span>
+</div>
+<main id="main" tabindex="-1">
+  <section id="welcome" class="welcome">
+    <div class="mark" aria-hidden="true"><svg viewBox="0 0 1024 1024" fill="currentColor" aria-hidden="true" focusable="false"><path d="M520 250C532 372 650 430 650 586c0 84-60 138-138 138s-138-54-138-138c0-74 46-114 72-186 16 42 36 62 52 52 14-42-4-120 22-202z"/><rect x="300" y="742" width="424" height="64" rx="32" transform="rotate(-9 512 774)"/><rect x="300" y="742" width="424" height="64" rx="32" transform="rotate(9 512 774)"/></svg></div>
+    <p class="eyebrow">The Long Dark</p>
+    <h1>Whiteout</h1>
+    <p class="lead">Edit your Long Dark saves. Every save makes a backup first.</p>
+    <div id="quickSaves" class="quick" hidden></div>
+    <div class="startlinks">
+      <button id="openBtn" type="button" class="linkbtn">Open a slot file…</button>
+      <button id="openSrvBtn" type="button" class="linkbtn">Browse game saves</button>
+    </div>
+    <p class="muted small starthint">You can also drag a file into the window. It opens as a copy, and Save asks where to write it.</p>
+    <details class="how">
+      <summary>How it works</summary>
+    <div class="steps">
+      <div class="step"><span class="n">1</span><div>Watch your game while it runs. The open slot updates whenever the game saves. To get a fresh save, save in the game or change a video setting.</div></div>
+      <div class="step"><span class="n">2</span><div>Edit only after closing the game, so it cannot overwrite your changes or keep an old version in memory.</div></div>
+      <div class="step"><span class="n">3</span><div>Press Save to game. Whiteout makes a backup first. Then start the game and load the slot from the menu.</div></div>
+    </div>
+    </details>
+  </section>
+  <section id="app" hidden>
+    <div class="docbar">
+      <div id="slotInfo"></div>
+      <div class="docactions">
+        <button id="menuBtn" type="button" class="ico iconbtn" popovertarget="docMenu" title="More actions" aria-label="More actions" aria-haspopup="menu"></button>
+        <div id="docMenu" class="menu" popover role="menu" aria-label="File">
+          <button id="openBtn2" type="button" role="menuitem">Open another file…</button>
+          <button id="dlBtn" type="button" role="menuitem" hidden>Save a copy…</button>
+        </div>
+        <div id="saveInfo" class="saveinfo" hidden><button id="reviewBtn" type="button" class="linkbtn" hidden></button><span id="saveInfoText"></span></div>
+        <button id="saveBtn" type="button" class="primary" hidden>Save to game</button>
+      </div>
+    </div>
+    <nav id="tabs" class="tabs" aria-label="Sections"></nav>
+    <div id="searchBar" class="searchbar" hidden><input id="tabSearch" type="search" placeholder="Search this tab ( / )" aria-label="Search this tab" autocomplete="off"><span id="searchNote" class="muted small" role="status"></span></div>
+    <div id="view"></div>
+  </section>
+
+  <section id="mapView" class="mapview" aria-label="Map" hidden>
+    <aside id="mapNav" class="mapnav" aria-label="Regions">
+      <div class="mapnav-head">
+        <input id="mapSearch" type="search" placeholder="Regions, places and pins" aria-label="Search regions, places and pins" autocomplete="off" spellcheck="false">
+        <button id="mapNavClose" type="button" class="ghost iconbtn ico" title="Close" aria-label="Close region list" style="--i: var(--ico-close)"></button>
+      </div>
+      <div id="mapList" class="mapnav-list"></div>
+    </aside>
+    <div id="mapScrim" class="mapscrim" hidden></div>
+    <div class="mapstage">
+      <div id="mapFrame" class="mapframe" tabindex="0" role="region" aria-label="Map image" aria-describedby="mapHint">
+        <div id="mapLayer" class="maplayer"></div>
+      </div>
+      <p id="mapHint" class="sr-only">Arrow keys move the map. Plus and minus zoom, zero fits the map to the window.</p>
+      <div class="maptop">
+        <button id="mapNavBtn" type="button" class="maptitle ico" aria-controls="mapNav" aria-expanded="false" style="--i: var(--ico-list)"><span id="mapTitle">Map</span></button>
+        <div class="mapspacer"></div>
+        <div class="seg" role="group" aria-label="Difficulty">
+          <button type="button" data-diff="p" aria-pressed="true" title="Pilgrim, Voyageur and Stalker">Pilgrim–Stalker</button>
+          <button type="button" data-diff="i" aria-pressed="false" title="Interloper and Misery">Interloper–Misery</button>
+        </div>
+        <div class="maptools" role="group" aria-label="Tools">
+          <button id="mapPinBtn" type="button" class="glassbtn tool ico" aria-pressed="false" title="Add a pin to the map" style="--i: var(--ico-flag)"><span>Pin</span></button>
+          <button id="mapTeleBtn" type="button" class="glassbtn tool ico" aria-pressed="false" title="Choose the teleport destination on the map" style="--i: var(--ico-target)" hidden><span>Teleport</span></button>
+          <button id="mapCenterBtn" type="button" class="glassbtn tool ico" title="Center the map on the player" style="--i: var(--ico-target)" hidden><span>Center</span></button>
+          <button id="mapTrailBtn" type="button" class="glassbtn tool ico" aria-pressed="true" title="Show the path the player has walked" style="--i: var(--ico-flag)" hidden><span>Trail</span></button>
+          <button id="mapTrailClear" type="button" class="glassbtn tool ico" title="Clear the trail" style="--i: var(--ico-close)" hidden><span>Clear</span></button>
+        </div>
+        <button id="mapInfoBtn" type="button" class="glassbtn iconbtn ico" title="About the maps and sources" aria-label="About the maps and sources" style="--i: var(--ico-info)"></button>
+      </div>
+      <p id="mapCredit" class="mapcredit" hidden>Map by <a href="https://steamcommunity.com/profiles/76561198054890338" target="_blank" rel="noopener noreferrer">Krueger</a> · <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2899955301" target="_blank" rel="noopener noreferrer">Source</a></p>
+      <p id="mapNote" class="mapnote" role="status" hidden>The player is in an area without a map</p>
+      <div id="mapCard" class="mapexits mapcard" role="status" hidden></div>
+      <div id="mapExits" class="mapexits" hidden></div>
+      <div id="mapState" class="mapstate" role="status" aria-live="polite" hidden></div>
+    </div>
+  </section>
+</main>
+<footer class="note">Changes stay in memory until you press Save to game. A backup is always made before writing.</footer>
+</div>
+
+<dialog id="slotsDlg" aria-labelledby="slotsTitle">
+  <div class="dlg">
+    <div class="dlg-head">
+      <h2 id="slotsTitle">Game saves</h2>
+      <span id="slotCount" class="tag"></span>
+      <button type="button" class="ghost" data-close>Close</button>
+    </div>
+    <p id="slotsPath" class="muted small path"></p>
+    <ul id="slotList" class="slots"></ul>
+    <p id="slotsStatus" class="dlg-status" role="status"></p>
+    <div class="dlg-foot">
+      <button type="button" id="slotRefreshBtn">Refresh</button>
+      <button type="button" id="slotFolderBtn">Change folder…</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="bakDlg" aria-labelledby="bakTitle">
+  <div class="dlg">
+    <div class="dlg-head">
+      <h2 id="bakTitle">Backups</h2>
+      <button type="button" class="ghost" data-close>Close</button>
+    </div>
+    <p class="muted small">A backup is made before every save and whenever the game saves. Whiteout keeps the newest ones (choose how many in Settings, Backups). Named and locked backups are never deleted automatically.</p>
+    <div class="dlg-foot"><button type="button" id="bakNowBtn">Create a backup now…</button></div>
+    <ul id="bakList" class="slots"></ul>
+    <p id="bakStatus" class="dlg-status" role="status"></p>
+  </div>
+</dialog>
+
+<dialog id="partDlg" aria-labelledby="partTitle">
+  <div class="dlg">
+    <div class="dlg-head"><h2 id="partTitle">Restore part</h2></div>
+    <p id="partLead" class="muted small"></p>
+    <div id="partList" class="setgroup"></div>
+    <div class="dlg-foot"><button type="button" id="partOk" class="primary">Restore selected</button><button type="button" id="partCancel">Cancel</button></div>
+  </div>
+</dialog>
+
+<dialog id="settingsDlg" aria-labelledby="settingsTitle">
+  <div class="dlg">
+    <div class="dlg-head">
+      <h2 id="settingsTitle">Settings</h2>
+      <button type="button" class="ghost" data-close>Close</button>
+    </div>
+    <section class="setgroup">
+      <h3>Save folder</h3>
+      <p id="setDirPath" class="path small"></p>
+      <p id="setDirNote" class="muted small"></p>
+      <div class="dlg-foot">
+        <button type="button" id="setDirPick">Choose folder…</button>
+        <button type="button" id="setDirAuto" class="ghost">Detect automatically</button>
+      </div>
+    </section>
+    <section class="setgroup">
+      <h3>Data folder</h3>
+      <p id="dataDirPath" class="path small"></p>
+      <p id="dataDirNote" class="muted small"></p>
+      <p class="muted small">Your pins, trails, loadouts and bookmarks are kept here. Choose a folder inside iCloud Drive, Google Drive, OneDrive or Dropbox to use them on more than one computer.</p>
+      <div class="dlg-foot">
+        <button type="button" id="dataDirPick">Choose folder…</button>
+        <button type="button" id="dataDirReset" class="ghost">Reset to default</button>
+        <button type="button" id="dataDirOpen" class="ghost">Open folder</button>
+      </div>
+    </section>
+    <section class="setgroup">
+      <h3>Watching</h3>
+      <label class="chk"><input type="checkbox" id="liveReloadChk"><span>Update the open slot when the game saves<small class="muted">If you have unsaved changes, Whiteout asks first.</small></span></label>
+      <label class="chk"><input type="checkbox" id="autoBackupChk"><span>Back up when the game saves<small class="muted">Kept as backups you can name and lock. Identical content is not backed up twice.</small></span></label>
+    </section>
+    <section class="setgroup">
+      <h3>Map</h3>
+      <label class="chk"><input type="checkbox" id="mapSteamChk"><span>Load map images from Steam<small class="muted">The images are stored on Steam, so Steam sees your IP address when they load. Off until you allow it.</small></span></label>
+      <label class="chk"><input type="checkbox" id="remoteChk"><span>Map remote while you play<small class="muted">A shortcut that works while the game has focus. It opens the map on your current region with numbers on the exits, and the number keys then open those maps. Press the shortcut again to return.</small></span></label>
+      <div class="remoterow">
+        <label for="remoteKey">Shortcut</label>
+        <input id="remoteKey" type="text" readonly spellcheck="false" autocomplete="off" aria-describedby="remoteNote">
+        <button id="remoteReset" type="button">Reset</button>
+      </div>
+      <p id="remoteNote" class="muted small" role="status">Click the box and press the keys you want. Use Ctrl or Alt with a letter or a function key.</p>
+    </section>
+    <section class="setgroup">
+      <h3>Backups</h3>
+      <label class="setrow" for="keepBackups"><span>Keep last<small class="muted">Per slot. Named and locked backups are always kept.</small></span>
+        <select id="keepBackups"><option value="5">5 backups</option><option value="10">10 backups</option><option value="20">20 backups</option><option value="30">30 backups</option><option value="50">50 backups</option><option value="100">100 backups</option><option value="200">200 backups</option><option value="0">Keep all</option></select>
+      </label>
+      <p id="bakUsage" class="muted small" role="status"></p>
+      <div id="bakSlots" class="bakslots"></div>
+      <div class="dlg-foot"><button type="button" id="bakOpenFolder">Open backup folder</button></div>
+    </section>
+    <section class="setgroup">
+      <h3>Editor</h3>
+      <label class="chk"><input type="checkbox" id="defaultCheat"><span>Mark as cheated by default<small class="muted">Applies to slots you open from now on.</small></span></label>
+      <label class="chk"><input type="checkbox" id="confirmSaveChk"><span>Show a summary before saving<small class="muted">A list of changes and a confirmation before writing.</small></span></label>
+    </section>
+    <section class="setgroup">
+      <h3>Game detection</h3>
+      <p id="setGameNote" class="muted small"></p>
+      <label class="setrow" for="procName"><span>Game process name<small class="muted">Only if detection fails, e.g. tld</small></span>
+        <input id="procName" type="text" maxlength="60" autocomplete="off" spellcheck="false" placeholder="tld">
+      </label>
+      <label class="chk"><input type="checkbox" id="allowRunningChk"><span>Allow saving while the game is running<small class="muted">Not recommended. The game may overwrite your changes.</small></span></label>
+    </section>
+    <section class="setgroup">
+      <h3>Updates</h3>
+      <p id="updateVersion" class="small"></p>
+      <label class="chk"><input type="checkbox" id="autoUpdateChk"><span>Check for updates automatically<small class="muted">Off until you allow it. At most once a day when Whiteout starts. Nothing is downloaded until you press Install.</small></span></label>
+      <p id="updateNote" class="muted small"></p>
+      <div class="dlg-foot"><button type="button" id="updateCheckBtn">Check now</button></div>
+      <p id="updateStatus" class="dlg-status" role="status"></p>
+    </section>
+    <section class="setgroup">
+      <h3>Help</h3>
+      <div class="dlg-foot"><button type="button" id="tourBtn">Replay the tour</button></div>
+      <p class="muted small">A short walkthrough of the whole editor. It also opens on its own the first time you start Whiteout.</p>
+    </section>
+    <section class="setgroup">
+      <h3>About</h3>
+      <p class="small"><strong>Whiteout</strong> <span id="appVersion" class="muted"></span></p>
+      <p class="muted small">An unofficial, open source save editor for The Long Dark. Whiteout is an independent project and has not been authorized, sponsored, or otherwise approved by Hinterland Studio Inc. The Long Dark is a trademark of Hinterland Studio Inc., registered in the United States and other countries.</p>
+      <p class="small"><a href="https://github.com/Sinerla-Development/Whiteout" target="_blank" rel="noopener noreferrer">Source code and releases</a> · MIT license</p>
+      <div class="dlg-foot"><button type="button" id="noticesBtn">Open source licenses</button></div>
+      <h4>Credits</h4>
+      <ul class="credits">
+        <li>Huge thanks to <a href="https://steamcommunity.com/profiles/76561198212232496" target="_blank" rel="noopener noreferrer">HokuOwl</a>, whose <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3255435617" target="_blank" rel="noopener noreferrer">Updated Region Maps [2025]</a> guide makes the map view in Whiteout possible, and who kindly allowed Whiteout to use the maps.</li>
+        <li>The Game World Map, Langston Mine map and Transition Cave map are by <a href="https://steamcommunity.com/profiles/76561198054890338" target="_blank" rel="noopener noreferrer">Krueger</a>, from the guide <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2899955301" target="_blank" rel="noopener noreferrer">Tales from the Far Territory map locations</a>. The maps are freely shareable with credit to the creator and the source.</li>
+        <li>Skill level thresholds come from the <a href="https://thelongdark.fandom.com/" target="_blank" rel="noopener noreferrer">The Long Dark Wiki</a>.</li>
+      </ul>
+      <p class="muted small">The map images are not part of Whiteout. They are loaded from Steam only after you allow it, and then Steam can see your IP address.</p>
+    </section>
+  </div>
+</dialog>
+
+<dialog id="diffDlg" aria-labelledby="diffTitle">
+  <div class="dlg">
+    <div class="dlg-head">
+      <h2 id="diffTitle"></h2>
+      <button type="button" class="ghost" data-close>Close</button>
+    </div>
+    <div id="diffIssues"></div>
+    <p id="diffLead" class="muted small"></p>
+    <div id="diffBody"></div>
+    <div class="dlg-foot">
+      <button id="diffOk" type="button" class="primary"></button>
+      <button id="diffBack" type="button">Back</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="blockDlg" aria-labelledby="blockTitle">
+  <div class="dlg">
+    <div class="dlg-head">
+      <h2 id="blockTitle">The game is running</h2>
+      <button type="button" class="ghost" data-close>Close</button>
+    </div>
+    <p>Slots are not written while the game is open. The game may overwrite your changes, and it does not re-read the file until you load the slot again.</p>
+    <p class="muted small">Close the game and press Save to game again. Your changes stay in this window. You can also save a copy anywhere.</p>
+    <div class="dlg-foot">
+      <button id="blockCopyBtn" type="button" class="primary">Save a copy…</button>
+      <button type="button" data-close>Cancel</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="pinDlg" aria-labelledby="pinTitle">
+  <form id="pinForm" class="dlg" novalidate>
+    <div class="dlg-head">
+      <h2 id="pinTitle">New pin</h2>
+      <button type="button" class="ghost" data-close>Close</button>
+    </div>
+    <p id="pinWhere" class="muted small"></p>
+    <div class="pwgrid">
+      <label>Name<input id="pinName" type="text" maxlength="60" autocomplete="off" placeholder="e.g. Base camp"></label>
+      <label>Note<textarea id="pinNote" rows="3" maxlength="500" placeholder="e.g. chest in the basement"></textarea></label>
+      <div class="field"><span class="lbl" id="pinColorLbl">Color</span><div id="pinSwatches" class="swatches" role="group" aria-labelledby="pinColorLbl"></div></div>
+    </div>
+    <p id="pinStatus" class="dlg-status" role="status"></p>
+    <div class="dlg-foot">
+      <button id="pinSave" type="submit" class="primary">Save</button>
+      <button id="pinTele" type="button" hidden>Teleport here</button>
+      <button id="pinDel" type="button" class="danger" hidden>Delete</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="mapInfoDlg" aria-labelledby="mapInfoTitle">
+  <div class="dlg">
+    <div class="dlg-head">
+      <h2 id="mapInfoTitle">Map sources</h2>
+      <button type="button" class="ghost" data-close>Close</button>
+    </div>
+    <p>The maps are made by the community. The images are loaded from Steam only after you allow it, and then Steam can see your IP address. You can turn this off in Settings.</p>
+    <section class="setgroup">
+      <h3>Credits</h3>
+      <ul class="credits">
+        <li>Huge thanks to <a href="https://steamcommunity.com/profiles/76561198212232496" target="_blank" rel="noopener noreferrer">HokuOwl</a>, whose <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3255435617" target="_blank" rel="noopener noreferrer">Updated Region Maps [2025]</a> guide makes the map view in Whiteout possible, and who kindly allowed Whiteout to use the maps.</li>
+        <li>The Game World Map, Langston Mine map and Transition Cave map are by <a href="https://steamcommunity.com/profiles/76561198054890338" target="_blank" rel="noopener noreferrer">Krueger</a>, from the guide <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2899955301" target="_blank" rel="noopener noreferrer">Tales from the Far Territory map locations</a>. The maps are freely shareable with credit to the creator and the source.</li>
+      </ul>
+    </section>
+    <section class="setgroup">
+      <h3>Usage</h3>
+      <ul class="credits">
+        <li>Choose a region from the list, grouped into Wintermute and Tales from the Far Territory. The map opens in your player's region when a slot is open, otherwise in the region you viewed last. Orange rings are transition points to neighboring regions.</li>
+        <li>Drag to pan, scroll or pinch to zoom. Keyboard: arrows pan, plus and minus zoom, 0 fits the map to the window.</li>
+        <li>Search finds regions, places and your own pins. Places were read from the images with text recognition, so the list is not complete.</li>
+        <li>Use the Pin tool to add your own pins. They are kept in your data folder.</li>
+        <li>When a slot is open, your position shows as a green dot in 13 regions, and the Teleport tool sets the teleport to the spot you click. The position updates when the game saves, and Follow player switches the map along with your region. In an area without a map, the current map stays open.</li>
+      </ul>
+    </section>
+  </div>
+</dialog>
+
+<script src="store.js"></script>
+<script src="ui-effects.js"></script>
+<script src="panzoom.js"></script>
+<script src="doc-menu.js"></script>
+<script src="map.js"></script>
+<script src="data.js"></script>
+<script src="trader-data.js"></script>
+<script src="editor.js"></script>
+<script src="validate.js"></script>
+<script src="more.js"></script>
+<script src="search.js"></script>
+<script src="toasts.js"></script>
+<script src="desktop.js"></script>
+<script src="commands.js"></script>
+<script src="tools.js"></script>
+<script src="loadouts.js"></script>
+<script src="updates.js"></script>
+<script src="tour.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "whiteout",
+  "version": "0.1.1",
+  "private": true,
+  "description": "Unofficial save editor for The Long Dark",
+  "license": "MIT",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build --config src-tauri/tauri.no-updater.conf.json",
+    "build:signed": "tauri build",
+    "tauri": "tauri",
+    "test:ui": "node tests/validate-test.js && node tests/more-test.js && node tests/ui-test.js",
+    "test:rust": "cargo test --manifest-path src-tauri/Cargo.toml",
+    "notices": "node scripts/third-party-notices.js",
+    "trader-data": "node scripts/trader-guids.js"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "playwright": "^1"
+  }
+}

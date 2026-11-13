@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024"><defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d93a4c"/>
+      <stop offset="1" stop-color="#9a1a30"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+  <g fill="#fff1e0">
+    <circle cx="170" cy="200" r="34" opacity="0.9"/>
+    <circle cx="350" cy="128" r="22" opacity="0.65"/>
+    <circle cx="610" cy="150" r="28" opacity="0.85"/>
+    <circle cx="850" cy="220" r="36" opacity="0.9"/>
+    <circle cx="920" cy="470" r="24" opacity="0.7"/>
+    <circle cx="120" cy="470" r="26" opacity="0.75"/>
+    <circle cx="880" cy="700" r="32" opacity="0.85"/>
+    <circle cx="150" cy="740" r="34" opacity="0.9"/>
+    <circle cx="290" cy="920" r="22" opacity="0.6"/>
+    <circle cx="760" cy="920" r="26" opacity="0.7"/>
+  </g>
+  <g transform="translate(512 560) scale(1.08) translate(-512 -560)">
+    <path d="M512 232C542 352 672 424 672 592c0 94-68 154-160 154s-160-60-160-154c0-84 50-134 78-202 14 38 38 58 58 46 14-48-4-128 24-204z" fill="#fff1e0"/>
+    <path d="M512 516C520 578 580 604 580 666c0 44-30 70-68 70s-68-26-68-70c0-52 40-74 68-150z" fill="#d93a4c"/>
+    <rect x="274" y="768" width="476" height="60" rx="30" fill="#f1c6b3" transform="rotate(12 512 798)"/>
+    <rect x="274" y="768" width="476" height="60" rx="30" fill="#fff1e0" transform="rotate(-12 512 798)"/>
+  </g>
+</svg>

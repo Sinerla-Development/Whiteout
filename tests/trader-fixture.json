@@ -1,0 +1,195 @@
+{
+ "m_SystemEnabled": true,
+ "m_CurrentTrust": 3,
+ "m_HighestTrust": 3,
+ "m_ContactsThisAurora": 1,
+ "m_HasInterruptedPlayerPassingTime": true,
+ "m_UnlockedExchangeNames": [],
+ "m_UnlockedConversations": [
+  {
+   "m_ConversationName": "Trader_MenuFlow_WhoAreYou"
+  },
+  {
+   "m_ConversationName": "Trader_MenuFlow_Survivors"
+  }
+ ],
+ "m_ConversationsHad": [
+  "Trader_MenuFlow_TraderIntro",
+  "Trader_MenuFlow_WhoAreYou"
+ ],
+ "m_UnlockedTraderImprovements": [],
+ "m_LastAuroraNum": 11,
+ "m_AvailableExchangesThisAurora": [
+  {
+   "m_Description": {
+    "m_LocalizationID": "GAMEPLAY_SaltDescription"
+   },
+   "m_MaxExchangeInSingleTrade": 3,
+   "m_GainedItem": "b8437071e8471e04a94d16849995a081",
+   "m_GainedItemAmount": 1,
+   "m_UnlockedExchanges": [],
+   "m_UnlockedConversations": [],
+   "m_ExchangeItems": [
+    {
+     "m_ExchangeItemType": "CategoryWeight",
+     "m_GearItemData": "0a55f56edc25b1c47948d8ef6f73056e",
+     "m_ItemCategory": "473132e5ce883ab4eb72fb53594b7190",
+     "m_PowderType": "",
+     "m_LiquidType": "",
+     "m_Amount": 2,
+     "m_Weight": 3000000000,
+     "IsWeight": true
+    },
+    {
+     "m_ExchangeItemType": "Liquid",
+     "m_GearItemData": "0a55f56edc25b1c47948d8ef6f73056e",
+     "m_ItemCategory": "e4abb03f915b9334f9d1e13f1fca665b",
+     "m_PowderType": "",
+     "m_LiquidType": "ee84a2e67c4c34f139368b6c21b44216",
+     "m_Amount": 2,
+     "m_Weight": -1294967296,
+     "m_LiquidVolume": 1000000000
+    }
+   ],
+   "m_CheapExchangeItems": [
+    {
+     "m_ExchangeItemType": "CategoryWeight",
+     "m_GearItemData": "0a55f56edc25b1c47948d8ef6f73056e",
+     "m_ItemCategory": "473132e5ce883ab4eb72fb53594b7190",
+     "m_PowderType": "",
+     "m_LiquidType": "",
+     "m_Amount": 2,
+     "m_Weight": 2000000000,
+     "IsWeight": true
+    },
+    {
+     "m_ExchangeItemType": "Liquid",
+     "m_GearItemData": "0a55f56edc25b1c47948d8ef6f73056e",
+     "m_ItemCategory": "e4abb03f915b9334f9d1e13f1fca665b",
+     "m_PowderType": "",
+     "m_LiquidType": "ee84a2e67c4c34f139368b6c21b44216",
+     "m_Amount": 2,
+     "m_Weight": -1294967296,
+     "m_LiquidVolume": 750000000
+    }
+   ],
+   "m_TradeExchangeName": "Salt"
+  },
+  {
+   "m_Description": {
+    "m_LocalizationID": "GAMEPLAY_RifleAmmunitionDescription"
+   },
+   "m_MaxExchangeInSingleTrade": 10,
+   "m_GainedItem": "b077bbe3815612345a39da9a3518c642",
+   "m_GainedItemAmount": 1,
+   "m_UnlockedExchanges": [],
+   "m_UnlockedConversations": [],
+   "m_ExchangeItems": [
+    {
+     "m_ExchangeItemType": "CategoryAmount",
+     "m_GearItemData": "0a55f56edc25b1c47948d8ef6f73056e",
+     "m_ItemCategory": "d4cbecc3ac5fef14bb982e380ee992da",
+     "m_PowderType": "",
+     "m_LiquidType": "",
+     "m_Amount": 4,
+     "m_Weight": 705032704
+    },
+    {
+     "m_ExchangeItemType": "Liquid",
+     "m_GearItemData": "0a55f56edc25b1c47948d8ef6f73056e",
+     "m_ItemCategory": "e4abb03f915b9334f9d1e13f1fca665b",
+     "m_PowderType": "",
+     "m_LiquidType": "ee84a2e67c4c34f139368b6c21b44216",
+     "m_Amount": 2,
+     "m_Weight": -1294967296,
+     "m_LiquidVolume": 4500000000
+    },
+    {
+     "m_GearItemData": "a19980035a051384f947e8ea44731387",
+     "m_ItemCategory": "e4abb03f915b9334f9d1e13f1fca665b",
+     "m_PowderType": "",
+     "m_LiquidType": "ee84a2e67c4c34f139368b6c21b44216",
+     "m_Amount": 6,
+     "m_Weight": -1294967296,
+     "m_LiquidVolume": 1000000000
+    }
+   ],
+   "m_CheapExchangeItems": [
+    {
+     "m_ExchangeItemType": "CategoryAmount",
+     "m_GearItemData": "0a55f56edc25b1c47948d8ef6f73056e",
+     "m_ItemCategory": "d4cbecc3ac5fef14bb982e380ee992da",
+     "m_PowderType": "",
+     "m_LiquidType": "",
+     "m_Amount": 3,
+     "m_Weight": 705032704
+    },
+    {
+     "m_ExchangeItemType": "Liquid",
+     "m_GearItemData": "0a55f56edc25b1c47948d8ef6f73056e",
+     "m_ItemCategory": "e4abb03f915b9334f9d1e13f1fca665b",
+     "m_PowderType": "",
+     "m_LiquidType": "ee84a2e67c4c34f139368b6c21b44216",
+     "m_Amount": 2,
+     "m_Weight": -1294967296,
+     "m_LiquidVolume": 3250000000
+    },
+    {
+     "m_GearItemData": "a19980035a051384f947e8ea44731387",
+     "m_ItemCategory": "e4abb03f915b9334f9d1e13f1fca665b",
+     "m_PowderType": "",
+     "m_LiquidType": "ee84a2e67c4c34f139368b6c21b44216",
+     "m_Amount": 4,
+     "m_Weight": -1294967296,
+     "m_LiquidVolume": 1000000000
+    }
+   ],
+   "m_TradeExchangeName": "RifleAmmoBox"
+  }
+ ],
+ "m_SpecialRequests": [],
+ "m_ActiveTrade": {
+  "m_ExchangeBoxScene": "CoastalRegion",
+  "m_ExchangeStates": [
+   {
+    "m_Exchange": {
+     "m_Description": {
+      "m_LocalizationID": "GAMEPLAY_WolfskinPantsBlueprintDescription"
+     },
+     "m_MaxExchangeInSingleTrade": 1,
+     "m_GainedItem": "386ff10e5084c604ab4c57a1c5811e76",
+     "m_GainedItemAmount": 1,
+     "m_UnlockedExchanges": [],
+     "m_UnlockedConversations": [],
+     "m_ExchangeItems": [
+      {
+       "m_ExchangeItemType": "Liquid",
+       "m_GearItemData": "0a55f56edc25b1c47948d8ef6f73056e",
+       "m_ItemCategory": "",
+       "m_PowderType": "",
+       "m_LiquidType": "095871882a4a44fbab401411f1165c05",
+       "m_Amount": 2,
+       "m_LiquidVolume": 3000000000
+      },
+      {
+       "m_GearItemData": "0bba792dbc100134eb8b2edb45628f08",
+       "m_ItemCategory": "",
+       "m_PowderType": "",
+       "m_LiquidType": "",
+       "m_Amount": 1
+      },
+      {
+       "m_GearItemData": "5eb0ecbeb0e0ca74d9b62520611c3725",
+       "m_ItemCategory": "",
+       "m_PowderType": "",
+       "m_LiquidType": "",
+       "m_Amount": 8
+      }
+     ],
+     "m_TradeExchangeName": "Blueprints"
+    },
+    "m_ExchangedItems": []
+   }
+  ]
+ }
+}
