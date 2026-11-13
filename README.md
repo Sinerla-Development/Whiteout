@@ -53,7 +53,7 @@ Whiteout works offline and your saves stay on your computer. Only two things eve
 
 Close the game before you save to it, Whiteout won't write while it's running.
 
-On Windows run the `.exe`. The builds aren't signed yet, so SmartScreen may complain, just press More info and Run anyway. On macOS open the `.dmg` and the first time right click the app and choose Open. On Linux use `sudo apt install ./Whiteout_*.deb` or run the `.AppImage`. Whiteout is tested on Windows and macOS. The Linux builds are not tested yet, so expect rough edges there. It looks for saves from the native game, Proton and Flatpak Steam. If the window stays blank, start it with `WEBKIT_DISABLE_DMABUF_RENDERER=1 whiteout`.
+On Windows run the `.exe`. The builds aren't signed yet, so SmartScreen may complain, just press More info and Run anyway. On macOS open the `.dmg` and drag the app to Applications. The first time macOS blocks it, so open System Settings, go to Privacy & Security and press Open Anyway. On Linux use `sudo apt install ./Whiteout_*.deb` or run the `.AppImage`. Whiteout is tested on Windows and macOS. The Linux builds are not tested yet, so expect rough edges there. It looks for saves from the native game, Proton and Flatpak Steam. If the window stays blank, start it with `WEBKIT_DISABLE_DMABUF_RENDERER=1 whiteout`.
 
 ## Thanks
 
