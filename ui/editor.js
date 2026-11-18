@@ -328,7 +328,7 @@ function openBytes(bytes, name) {
     return;
   }
   if (!outer || typeof outer !== 'object' || !outer.m_Dict || typeof outer.m_Dict !== 'object') {
-    toast('This is not a game slot. Profile and settings files cannot be edited with this tool. Choose a slot file such as sandbox1.', 'err');
+    toast('That\'s not a game slot. Pick a slot file like sandbox1, profile and settings files don\'t open here.', 'err');
     return;
   }
   state.fileName = name;
@@ -389,6 +389,7 @@ function summarize(R, willCheat) {
     flags: [['Cannot die', !!cond.m_NeverDieProxy], ['Invulnerable', !!cond.m_Invulnerable], ['Unlimited carry', !!inv.m_ForceOverrideWeight], ['Marked as cheated', !!pm.m_CheatsUsed || !!willCheat]],
     items: new Map(), skills: [], aff: [],
     more: typeof tldMore !== 'undefined' ? tldMore.snap(R) : new Map(),
+    world: typeof tldWorld !== 'undefined' && R.sec === loadSec ? tldWorld.pending() : [],
   };
   for (const it of Array.isArray(inv.m_SerializedItems) ? inv.m_SerializedItems : []) {
     const g = gearOf(it);
@@ -446,6 +447,7 @@ function diffSections(a, b) {
     const ml = tldMore.diff(a.more, b.more);
     add('More', ml.length > 30 ? ml.slice(0, 30).concat(['… and ' + (ml.length - 30) + ' more changes']) : ml);
   }
+  add('World', (b.world || []).filter((l) => !(a.world || []).includes(l)));
   const moved = Math.hypot(a.pos.p[0] - b.pos.p[0], a.pos.p[2] - b.pos.p[2]) > 5;
   if (moved || a.pos.scene !== b.pos.scene) {
     const at = (s) => regionName(s.scene) + ', x ' + s.p[0].toFixed(0) + ', z ' + s.p[2].toFixed(0);
@@ -509,6 +511,32 @@ function check(label, get, set, hint) {
   return h('label', { class: 'chk' }, c, h('span', {}, label, hint ? h('small', {}, hint) : null));
 }
 
+function fillNeeds() {
+  const cond = gs('m_Condition_Serialized') || {};
+  const hun = gs('m_Hunger_Serialized') || {};
+  const thi = gs('m_Thirst_Serialized') || {};
+  const fat = gs('m_Fatigue_Serialized') || {};
+  const fre = gs('m_Freezing_Serialized') || {};
+  cond.m_CurrentHPProxy = 100;
+  hun.m_CurrentReserveCaloriesProxy = 2500;
+  thi.m_CurrentThirstProxy = 0;
+  fat.m_CurrentFatigueProxy = 0;
+  if ('m_CurrentFreezingProxy' in fre) fre.m_CurrentFreezingProxy = 0;
+}
+
+function clearAffliction(key) {
+  const o = gs(key);
+  if (!o) return;
+  for (const f of Object.keys(o)) if (LIST_FIELDS.has(f) && Array.isArray(o[f])) o[f] = [];
+  if (key === 'm_FrostbiteSerialized' && Array.isArray(o.m_LocationsCurrentFrostbiteDamage)) o.m_LocationsCurrentFrostbiteDamage = o.m_LocationsCurrentFrostbiteDamage.map(() => 0);
+  if (o.m_IsActive === true) o.m_IsActive = false;
+}
+
+function reviveAll() {
+  fillNeeds();
+  for (const [key] of AFFLICTIONS) clearAffliction(key);
+}
+
 function viewPlayer() {
   const cond = gs('m_Condition_Serialized') || {};
   const hun = gs('m_Hunger_Serialized') || {};
@@ -518,23 +546,14 @@ function viewPlayer() {
   const inv = gs('m_Inventory_Serialized') || {};
   const tod = gs('m_TimeOfDay_Serialized') || {};
   const rows = [
-    slider('Health', cond, 'm_CurrentHPProxy', 0, 100, 0.5, '0 – 100'),
-    h('div', { class: 'row' }, h('label', {}, 'Calories', h('small', {}, 'stored')),
-      (() => {
-        const b = h('input', { type: 'number', min: 0, max: 100000, step: 10, value: +num(hun.m_CurrentReserveCaloriesProxy).toFixed(1), 'aria-label': 'Calories' });
-        b.addEventListener('change', () => { const v = parseFloat(b.value); if (!Number.isNaN(v)) hun.m_CurrentReserveCaloriesProxy = v; });
-        return b;
-      })(), h('span', {}), h('button', { class: 'ghost', onclick: () => { hun.m_CurrentReserveCaloriesProxy = 2500; viewRender(); } }, 'Set 2500')),
+    slider('Health', cond, 'm_CurrentHPProxy', 0, 100, 0.5, '100 is full'),
+    slider('Calories', hun, 'm_CurrentReserveCaloriesProxy', 0, 2500, 10, 'stored'),
     slider('Thirst', thi, 'm_CurrentThirstProxy', 0, 100, 0.5, '0 = not thirsty'),
     slider('Fatigue', fat, 'm_CurrentFatigueProxy', 0, 100, 0.5, '0 = rested'),
     'm_CurrentFreezingProxy' in fre ? slider('Cold', fre, 'm_CurrentFreezingProxy', 0, 100, 0.5, '0 = warm') : null
   ];
   const full = h('button', { onclick: () => {
-    cond.m_CurrentHPProxy = 100;
-    hun.m_CurrentReserveCaloriesProxy = 2500;
-    thi.m_CurrentThirstProxy = 0;
-    fat.m_CurrentFatigueProxy = 0;
-    if ('m_CurrentFreezingProxy' in fre) fre.m_CurrentFreezingProxy = 0;
+    fillNeeds();
     viewRender();
     toast('Needs filled. Remember to save.');
   } }, 'Fill all needs');
@@ -544,9 +563,9 @@ function viewPlayer() {
     check('Invulnerable', () => !!cond.m_Invulnerable, (v) => { cond.m_Invulnerable = v; }),
     check('Unlimited carry', () => !!inv.m_ForceOverrideWeight, (v) => { inv.m_ForceOverrideWeight = v; if (v && inv.m_OverridedWeight === undefined) inv.m_OverridedWeight = 0; }));
   const info = h('div', { class: 'card' }, h('h3', {}, 'Slot'),
-    h('p', { class: 'muted' }, 'Time played: ' + fmtHours(num(tod.m_HoursPlayedNotPausedProxy))),
-    check('Mark as cheated', () => state.cheat, (v) => { state.cheat = v; }, 'Sets the cheats-used flag in the save.'));
-  return h('div', { class: 'grid2' }, h('div', { class: 'card' }, h('h3', {}, 'Needs'), rows, h('div', { class: 'actions' }, full)), h('div', {}, toggles, info));
+    h('div', { class: 'row r2' }, h('label', {}, 'Time played'), h('span', {}, fmtHours(num(tod.m_HoursPlayedNotPausedProxy)))),
+    check('Mark as cheated', () => state.cheat, (v) => { state.cheat = v; }, 'Flags the save as edited'));
+  return h('div', { class: 'grid2 even' }, h('div', { class: 'card' }, h('h3', {}, 'Needs'), rows, h('div', { class: 'actions' }, full)), h('div', { class: 'stack' }, toggles, info));
 }
 
 let _nc = null;
@@ -676,6 +695,30 @@ function qtyInfo(g) {
   return null;
 }
 
+function itemWeightKg(it) {
+  const g = gearOf(it);
+  if (!g) return null;
+  if (g.m_WeightKG !== undefined) return num(g.m_WeightKG) / 1e9;
+  const water = compObj(g, 'm_WaterSupplySerialized');
+  if (water) return num(water.m_VolumeProxy) / 1e9;
+  const powder = compObj(g, 'm_PowderItemSerialized');
+  if (powder && powder.m_WeightKG !== undefined) return num(powder.m_WeightKG) / 1e9;
+  const base = typeof WEIGHT_DATA !== 'undefined' ? WEIGHT_DATA[String(it.m_PrefabName || '').split(' ')[0]] : undefined;
+  if (base === undefined) return null;
+  let kg = base;
+  const liquid = compObj(g, 'm_LiquidItemSerialized');
+  if (liquid) kg += num(liquid.m_LiquidLitersProxy) / 1e9;
+  const stack = compObj(g, 'm_StackableItemSerialized');
+  if (stack && 'm_UnitsProxy' in stack) kg *= Math.max(1, num(stack.m_UnitsProxy));
+  return kg;
+}
+
+function fmtKg(x) {
+  if (x === null) return '?';
+  if (x === 0) return '0 kg';
+  return (x < 0.1 ? x.toFixed(2) : (Math.round(x * 10) / 10).toFixed(1)) + ' kg';
+}
+
 function setQty(g, v) {
   const q = qtyInfo(g);
   if (!q) return;
@@ -755,14 +798,12 @@ function viewInventory() {
   const wrap = h('div', {});
   const items = inv.m_SerializedItems;
   const iconBtn = (icon, label, cls, fn) => h('button', { type: 'button', class: 'ghost iconbtn ico ' + cls, style: '--i: var(--ico-' + icon + ')', title: label, 'aria-label': label, onclick: fn });
-  const weightOf = (it) => { const g = gearOf(it); return g ? num(g.m_WeightKG) / 1e9 : 0; };
-  const fmtKg = (x) => (Math.round(x * 10) / 10).toFixed(1) + ' kg';
   if (!state.invSort) state.invSort = 'order';
   if (!state.invCat) state.invCat = 'all';
 
   const count = h('span', { class: 'muted small count' });
   const updateCount = () => {
-    const total = items.reduce((s, it) => s + weightOf(it), 0);
+    const total = items.reduce((s, it) => s + (itemWeightKg(it) || 0), 0);
     count.textContent = (items.length === 1 ? '1 item' : items.length + ' items') + (total > 0 ? ' · ' + fmtKg(total) : '');
   };
   const search = h('input', { type: 'search', placeholder: 'Search inventory', 'aria-label': 'Search inventory', value: state.itemFilter, oninput: (e) => { state.itemFilter = e.target.value; drawList(); } });
@@ -812,7 +853,7 @@ function viewInventory() {
     const rows = items.map((it, idx) => ({ it, idx, nm: itemName(it.m_PrefabName), g: gearOf(it) })).filter((r) => r.g);
     if (state.invSort === 'name') rows.sort((a, b) => a.nm.localeCompare(b.nm, 'en'));
     else if (state.invSort === 'cond') rows.sort((a, b) => num(a.g.m_NormalizedCondition) - num(b.g.m_NormalizedCondition));
-    else if (state.invSort === 'weight') rows.sort((a, b) => num(b.g.m_WeightKG) - num(a.g.m_WeightKG));
+    else if (state.invSort === 'weight') rows.sort((a, b) => (itemWeightKg(b.it) || 0) - (itemWeightKg(a.it) || 0));
     for (const { it, idx, nm, g } of rows) {
       if (q && !(nm.toLowerCase().includes(q) || it.m_PrefabName.toLowerCase().includes(q))) continue;
       if (state.invCat !== 'all' && catOf(it.m_PrefabName) !== state.invCat) continue;
@@ -821,10 +862,12 @@ function viewInventory() {
       const condBox = h('input', { type: 'number', min: 0, max: 100, step: 1, value: cond, class: 'narrow', 'aria-label': 'Condition, ' + nm });
       condBox.addEventListener('change', () => { const v = parseFloat(condBox.value); if (!Number.isNaN(v)) setCond(g, it.m_PrefabName, v / 100); });
       const qi = qtyInfo(g);
+      const kg = itemWeightKg(it);
+      const wcell = h('td', { class: 'weight' + (kg === null ? ' muted' : ''), title: kg === null ? 'The game files Whiteout knows do not list this item' : null }, fmtKg(kg));
       let qcell = h('span', { class: 'muted' }, '–');
       if (qi) {
         const qb = h('input', { type: 'number', min: 0, step: qi.step, value: +qi.get().toFixed(3), class: 'narrow', 'aria-label': 'Amount, ' + nm });
-        qb.addEventListener('change', () => { const v = parseFloat(qb.value); if (!Number.isNaN(v)) { setQty(g, v); updateCount(); } });
+        qb.addEventListener('change', () => { const v = parseFloat(qb.value); if (!Number.isNaN(v)) { setQty(g, v); wcell.textContent = fmtKg(itemWeightKg(it)); updateCount(); } });
         qcell = h('span', { class: 'qty' }, qb, ' ', h('small', { class: 'muted' }, qi.label));
       }
       const wearing = compObj(g, 'm_ClothingItemSerialized');
@@ -832,7 +875,7 @@ function viewInventory() {
         h('td', {}, h('div', { class: 'iname' }, catIcon(catOf(it.m_PrefabName)), h('span', {}, nm), wearing && wearing.m_WearingProxy ? h('span', { class: 'tag' }, 'worn') : null), h('small', { class: 'muted iprefab' }, it.m_PrefabName)),
         h('td', {}, condBox, ' %'),
         h('td', {}, qcell),
-        h('td', { class: 'weight' }, num(g.m_WeightKG) > 0 ? fmtKg(num(g.m_WeightKG) / 1e9) : '–'),
+        wcell,
         h('td', { class: 'rowbtns' },
           iconBtn('copy', 'Duplicate: ' + nm, '', () => {
             const copy = parseJSON(ser(it));
@@ -873,7 +916,7 @@ function viewInventory() {
     h('div', { class: 'toolbar' }, h('label', { class: 'inline' }, 'Amount ', qtyIn), h('label', { class: 'inline' }, 'Condition ', condIn, ' %')),
     addStatus,
     h('div', { class: 'dlg-foot' }, h('button', { class: 'primary', onclick: doAdd }, 'Add to inventory')),
-    h('p', { class: 'muted small' }, 'Use the arrow keys to move in the list. Double-click or Enter also adds. Amount means pieces, liters or calories depending on the item, and empty uses the item\'s own default. Items marked legacy have no template in this game version and use an older one.')));
+    h('p', { class: 'muted small' }, 'Arrow keys move in the list, double click or Enter adds. Amount is pieces, liters or calories depending on the item, leave it empty for the default. Legacy items use an older template.')));
 
   drawList(); updateCount();
   wrap.append(bar, list, addDlg);
@@ -918,7 +961,7 @@ function viewSkills() {
       inp.addEventListener('change', () => { const v = parseInt(inp.value, 10); if (!Number.isNaN(v) && v >= 0) o.m_Points = v; });
       list.append(h('div', { class: 'skill', title: id }, h('label', {}, SKILL_NAMES[id] || id, lvl), SKILL_LEVELS[id] ? ticks : h('span', {}), inp));
     }
-    card.append(list, h('p', { class: 'muted' }, 'The level is determined by points in the game. The point thresholds come from The Long Dark wiki and may change in game updates.'));
+    card.append(list, h('p', { class: 'muted' }, 'Points decide the level. The limits come from The Long Dark wiki, so a game update can change them.'));
   } else card.append(h('p', { class: 'muted' }, 'No skills found.'));
   wrap.append(card);
   const ps = gs('m_PlayerSkillsSerialized');
@@ -1050,17 +1093,17 @@ function viewTeleport() {
   const offIn = h('input', { type: 'number', step: 0.5, value: T.yOff, class: 'narrow', 'aria-label': 'Height margin (m)' });
   const yNote = h('p', { class: 'muted small' });
   const hereNote = h('p', { class: 'muted' }, here.interior
-    ? 'You are now indoors (' + here.scene + '). Outdoor area: ' + (here.region ? regionName(here.region) : 'unknown') + '.'
-    : 'You are now in: ' + regionName(here.region) + ', x ' + here.pos[0].toFixed(0) + ', z ' + here.pos[2].toFixed(0) + '.');
+    ? 'You\'re inside ' + here.scene + (here.region ? ' in ' + regionName(here.region) : '') + '.'
+    : 'You\'re in ' + regionName(here.region) + ' at x ' + here.pos[0].toFixed(0) + ', z ' + here.pos[2].toFixed(0) + '.');
 
   function computeY() {
     if (T.yMode === 'keep') return { y: here.pos[1], note: 'The player\'s current height ' + here.pos[1].toFixed(1) + ' m is kept.' };
     if (T.yMode === 'manual') return { y: T.manualY, note: 'Manually set height.' };
     let est = null;
     try { est = estimateHeight(T.region, T.x, T.z); } catch (e) { est = null; }
-    if (!est) return { y: here.pos[1], note: 'There is no saved terrain data for this region (it has not been visited). Using the current height ' + here.pos[1].toFixed(1) + ' m. If you fall, raise the height manually.' };
+    if (!est) return { y: here.pos[1], note: 'No terrain saved for this region yet, so your current height ' + here.pos[1].toFixed(1) + ' m is used. If you fall, set it higher.' };
     const y = est.y + T.yOff;
-    return { y, note: 'Height estimated from ' + est.count + ' known points, nearest ' + est.nearest.toFixed(0) + ' m away. ' + (est.nearest > 120 ? 'The nearest point is far away, the estimate may be wrong. ' : '') + 'Estimate ' + y.toFixed(1) + ' m (includes ' + T.yOff + ' m margin).' };
+    return { y, note: 'About ' + y.toFixed(1) + ' m, guessed from ' + est.count + ' saved points. The nearest one is ' + est.nearest.toFixed(0) + ' m away' + (est.nearest > 120 ? ', so it may be off' : '') + '.' };
   }
   function refresh() {
     xIn.value = +T.x.toFixed(2);
@@ -1080,19 +1123,17 @@ function viewTeleport() {
   const mapHost = h('div', { class: 'telemap' });
 
   function drawMap() {
-    const mapped = !!DATA.regions[T.region] && !!(window.tldMode && tldMode.pickTeleport);
-    mapHost.replaceChildren(
-      h('p', { class: 'muted' }, mapped
-        ? 'Choose the destination on the map of ' + regionName(T.region) + ' in the Map view. The map images load from Steam after you allow it.'
-        : 'There is no map for this region. Enter coordinates manually or use bookmarks.'),
-      mapped ? h('div', { class: 'actions' }, h('button', { type: 'button', id: 'teleMapBtn', onclick: () => tldMode.pickTeleport(T.region) }, 'Choose on the map')) : null);
+    const mapped = !!DATA.regions[T.region];
+    mapHost.replaceChildren(...[
+      h('p', { class: 'muted' }, mapped ? 'Pick the spot on the map.' : 'No map for this region. Type the coordinates or use a bookmark.'),
+      mapped ? h('div', { class: 'actions' }, h('button', { type: 'button', id: 'teleMapBtn', onclick: () => { if (!(window.tldMode && tldMode.pickTeleport && tldMode.pickTeleport(T.region))) toast('The map is not ready yet. Open a slot and try again.', 'err'); } }, 'Choose on the map')) : null].filter(Boolean));
   }
 
   const goBtn = h('button', { class: 'primary big', onclick: () => {
     const r = computeY();
     const y = T.yMode === 'manual' ? T.manualY : r.y;
     applyTeleport(T.region, T.x, y, T.z);
-    toast('Teleport set: ' + regionName(T.region) + ' (' + T.x.toFixed(0) + ', ' + y.toFixed(0) + ', ' + T.z.toFixed(0) + '). Save and load the game.');
+    toast('Teleport set to ' + regionName(T.region) + '. Save, then load the slot in the game.');
     viewRender();
   } }, 'Teleport here');
 
@@ -1103,7 +1144,7 @@ function viewTeleport() {
     h('div', { class: 'row r2' }, h('label', {}, 'Height'), yMode),
     h('div', { class: 'row r2' }, h('label', {}, 'Height margin (m)'), offIn),
     yNote, h('div', { class: 'actions' }, goBtn),
-    h('p', { class: 'muted small' }, 'The height is an estimate. If you fall through the terrain in the game, restore a backup and set a higher height manually.'));
+    h('p', { class: 'muted small' }, 'The height is a guess. If you fall through the ground, restore a backup and set it higher.'));
 
   const bm = h('div', { class: 'card' }, h('h3', {}, 'Bookmarks'));
   const bmBox = h('div', { class: 'poilist' });
@@ -1134,7 +1175,7 @@ function viewTeleport() {
 }
 
 function viewInjuries() {
-  const card = h('div', { class: 'card' }, h('h3', {}, 'Afflictions and illnesses'));
+  const card = h('div', { class: 'card' }, h('h3', {}, 'Injuries'));
   let any = false;
   const counts = [];
   for (const [key, label] of AFFLICTIONS) {
@@ -1144,18 +1185,11 @@ function viewInjuries() {
     counts.push([key, label, n]);
     if (n) any = true;
   }
-  function clearOne(key) {
-    const o = gs(key);
-    if (!o) return;
-    for (const f of Object.keys(o)) if (LIST_FIELDS.has(f) && Array.isArray(o[f])) o[f] = [];
-    if (key === 'm_FrostbiteSerialized' && Array.isArray(o.m_LocationsCurrentFrostbiteDamage)) o.m_LocationsCurrentFrostbiteDamage = o.m_LocationsCurrentFrostbiteDamage.map(() => 0);
-    if (o.m_IsActive === true) o.m_IsActive = false;
-  }
+  const clearOne = clearAffliction;
   for (const [key, label, n] of counts) {
     card.append(h('div', { class: 'row r3' }, h('label', {}, label), h('span', { class: n ? 'tag warn' : 'tag ok' }, n ? n + ' active' : 'none'), n ? h('button', { class: 'ghost', onclick: () => { clearOne(key); viewRender(); toast(label + ' cured. Remember to save.'); } }, 'Cure') : h('span', {})));
   }
-  card.append(h('div', { class: 'actions' }, h('button', { disabled: !any, onclick: () => { for (const [k] of counts) clearOne(k); viewRender(); toast('All listed afflictions cured. Remember to save.'); } }, 'Cure all')),
-    h('p', { class: 'muted' }, 'This resets sprains, bleeding, broken ribs, infections, frostbite and severe lacerations. Food poisoning, dysentery and other illnesses are in the next card.'));
+  card.append(h('div', { class: 'actions' }, h('button', { disabled: !any, onclick: () => { for (const [k] of counts) clearOne(k); viewRender(); toast('All injuries cured. Remember to save.'); } }, 'Cure all')));
   return card;
 }
 

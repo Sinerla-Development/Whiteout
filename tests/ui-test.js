@@ -290,6 +290,10 @@ const ok = (cond, msg) => { if (cond) console.log('  ok   ' + msg); else { failu
   ok(await page.evaluate(() => !!__mock.guard && /sandbox1$/.test(__mock.guard.path) && typeof __mock.guard.offsetMin === 'number'), 'the open slot is reported to the rescue guard');
   await page.evaluate(() => __mock.emit('save-rescued', { name: 'sandbox1', path: 'C:\\Users\\Tester\\AppData\\Local\\Hinterland\\TheLongDark\\Whiteout-backups\\sandbox1-2026-11-04_18-30-12' }));
   ok(await page.evaluate(() => { const t = document.querySelector('.toast-item.warn'); return !!t && /sandbox1 disappeared/.test(t.textContent) && /Whiteout-backups/.test(t.textContent); }), 'a warning names the slot and where the copy went');
+  await page.waitForSelector('dialog[aria-label="Restore sandbox1?"][open]');
+  ok(true, 'restoring the kept copy is offered');
+  await page.click('dialog[aria-label="Restore sandbox1?"] button:has-text("Cancel")');
+  await page.waitForFunction(() => !document.querySelector('dialog[aria-label="Restore sandbox1?"]'));
   await page.evaluate(() => __mock.emit('save-rescue-failed', 'io: disk full'));
   ok(await page.evaluate(() => /disk full/.test((document.querySelector('.toast-item.err') || {}).textContent || '')), 'a failed copy is reported');
 

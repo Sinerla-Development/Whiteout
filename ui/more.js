@@ -20,6 +20,7 @@
     m_PlayerGameStatsSerialized: 'Game stats',
     m_StoryMissionDataSerialized: 'Story missions',
     m_TransmitterSerialized: 'Transmitters',
+    m_FeatsEnabledSerialized: 'Feats',
     m_TraderSerialized: 'Trader',
   };
   const MORE_SECTIONS = Object.keys(TITLES);
@@ -99,6 +100,75 @@
     return out;
   }
 
+  const FEATS_SEC = 'm_FeatsEnabledSerialized';
+  const FEATS_KEY = 'm_FeatsEnabledThisSandbox';
+  const FEATS = [
+    { id: 'BookSmarts', name: 'Book Smarts', effect: 'Fully read research books give 10% more benefit' },
+    { id: 'ColdFusion', name: 'Cold Fusion', effect: 'Permanent +2 °C to Feels Like temperature' },
+    { id: 'EfficientMachine', name: 'Efficient Machine', effect: 'Use 10% fewer Calories' },
+    { id: 'FireMaster', name: 'Fire Master', effect: 'Survivors begin with Level 3 Fire-Starting' },
+    { id: 'FreeRunner', name: 'Free Runner', effect: 'Sprinting burns 25% fewer Calories' },
+    { id: 'SnowWalker', name: 'Snow Walker', effect: 'Stamina recharges 20% faster' },
+    { id: 'BlizzardWalker', name: 'Blizzard Walker', effect: 'Walking into wind slows you 25% less' },
+    { id: 'ExpertTrapper', name: 'Expert Trapper', effect: 'Snares are 100% more effective' },
+    { id: 'StraightToHeart', name: 'Straight to the Heart', effect: 'Coffee, GO! Energy Drinks and Emergency Stims last 25% longer' },
+    { id: 'NightWalker', name: 'Night Walker', effect: 'Less Fatigued at night, more Fatigued during the day' },
+    { id: 'MasterHunter', name: 'Master Hunter', effect: 'Tales from the Far Territory feat' },
+    { id: 'SettledMind', name: 'Settled Mind', effect: 'Immune to Cabin Fever, research is 20% faster' },
+    { id: 'CelestialNavigator', name: 'Celestial Navigator', effect: 'Walk faster on clear nights and during an aurora' },
+  ];
+  const FEAT_LIMITS = { Pilgrim: 5, Voyageur: 4, Stalker: 3, Interloper: 2, Custom: 5 };
+  const MAX_FEATS = 5;
+
+  function featLimit(mode) {
+    return Object.prototype.hasOwnProperty.call(FEAT_LIMITS, mode) ? FEAT_LIMITS[mode] : null;
+  }
+
+  function featsView(ft, mode) {
+    const list = ft && typeof ft === 'object' && Array.isArray(ft[FEATS_KEY]) ? ft[FEATS_KEY].filter((x) => typeof x === 'string') : [];
+    const known = new Set(FEATS.map((f) => f.id));
+    return {
+      enabled: list.length,
+      limit: featLimit(mode),
+      mode: featLimit(mode) === null ? '' : mode,
+      unknown: list.filter((x) => !known.has(x)),
+      on: new Set(list),
+    };
+  }
+
+  function setFeat(ft, id, on) {
+    if (!Array.isArray(ft[FEATS_KEY])) ft[FEATS_KEY] = [];
+    const arr = ft[FEATS_KEY];
+    const at = arr.indexOf(id);
+    if (on && at < 0) arr.push(id);
+    if (!on && at >= 0) arr.splice(at, 1);
+  }
+
+  function featWarning(v) {
+    const d = h('dialog', { 'aria-labelledby': 'featWarnTitle' },
+      h('div', { class: 'dlg' },
+        h('div', { class: 'dlg-head' }, h('h2', { id: 'featWarnTitle' }, 'Feat limit reached')),
+        h('p', {}, v.mode + ' allows ' + v.limit + ' feats and this slot now has ' + v.enabled + '.'),
+        h('p', { class: 'muted small' }, 'You can still add more. Nobody knows yet what the game does with extra feats.'),
+        h('div', { class: 'dlg-foot' }, h('button', { type: 'button', class: 'primary', onclick: () => d.close() }, 'Got it'))));
+    d.addEventListener('close', () => d.remove());
+    document.body.append(d);
+    d.showModal();
+  }
+
+  function completeTrade(tr, hours) {
+    const at = tr && typeof tr === 'object' && tr.m_ActiveTrade && typeof tr.m_ActiveTrade === 'object' ? tr.m_ActiveTrade : null;
+    const states = at && Array.isArray(at.m_ExchangeStates) ? at.m_ExchangeStates : [];
+    if (!states.length) return [];
+    const gains = states.map((s) => {
+      const e = s && s.m_Exchange && typeof s.m_Exchange === 'object' ? s.m_Exchange : {};
+      return { guid: e.m_GainedItem, amount: Math.max(1, Math.round(Number(e.m_GainedItemAmount) || 1)), name: String(e.m_TradeExchangeName || '') };
+    });
+    delete tr.m_ActiveTrade;
+    tr.m_TimeLastTradeComplete = Math.round(hours * 1000) / 1000;
+    return gains;
+  }
+
   const TRADER_SEC = 'm_TraderSerialized';
   const LIQUID_NAMES = { WaterPotable: 'water', WaterNonPotable: 'unsafe water', Kerosene: 'kerosene', CookingOil: 'cooking oil', WhaleOil: 'whale oil' };
   const lower = (s) => { const t = human(s); return t.charAt(0).toLowerCase() + t.slice(1); };
@@ -145,6 +215,7 @@
       trust: Number(t.m_CurrentTrust) || 0,
       highest: Number(t.m_HighestTrust) || 0,
       contacts: Number(t.m_ContactsThisAurora) || 0,
+      lastTrade: 'm_TimeLastTradeComplete' in t && Number.isFinite(Number(t.m_TimeLastTradeComplete)) ? Number(t.m_TimeLastTradeComplete) : null,
       talksHad: arr('m_ConversationsHad').length,
       talksOpen: arr('m_UnlockedConversations').length,
       requests: arr('m_SpecialRequests').length,
@@ -209,6 +280,12 @@
         }
       }
     }
+    const fl = lg(FEATS_SEC), fo = og(FEATS_SEC);
+    if (fl && typeof fl === 'object' && Array.isArray(fl[FEATS_KEY])) {
+      const now = fl[FEATS_KEY].length;
+      const was = fo && typeof fo === 'object' && Array.isArray(fo[FEATS_KEY]) ? fo[FEATS_KEY].length : 0;
+      if (now !== was && now > MAX_FEATS) push(out, 'Feats, enabled in this sandbox', was, now, { level: 'warning', msg: 'No difficulty allows more than ' + MAX_FEATS + ' feats.' });
+    }
     const tl = lg(TRADER_SEC), to = og(TRADER_SEC);
     if (tl && typeof tl === 'object' && 'm_CurrentTrust' in tl) {
       const cur = Number(tl.m_CurrentTrust), top = Number(tl.m_HighestTrust);
@@ -218,7 +295,7 @@
     }
   }
 
-  const api = { TITLES, MORE_SECTIONS, RULES, ruleFor, rangeIssue, walk, snap, diff, human, traderNames, traderCost, traderView, setTrust, validate: validateMore };
+  const api = { TITLES, MORE_SECTIONS, RULES, ruleFor, rangeIssue, walk, snap, diff, human, traderNames, traderCost, traderView, setTrust, completeTrade, FEATS, FEAT_LIMITS, MAX_FEATS, featLimit, featsView, setFeat, validate: validateMore };
   if (typeof document === 'undefined' || typeof TABS === 'undefined') { if (typeof module !== 'undefined') module.exports = api; return; }
   window.tldMore = api;
   api.eager = (v) => { eager = !!v; };
@@ -229,19 +306,14 @@
   let eager = false;
 
   function fold(id, title, hint, kids) {
-    const body = h('div', { class: 'fold-body' });
-    const d = h('details', { class: 'card fold', 'data-fold': 'more-' + id }, h('summary', {}, h('span', { class: 'fold-title' }, title), h('small', { class: 'muted' }, hint)), body);
-    let built = false;
-    const fill = () => {
-      if (built) return;
-      built = true;
-      body.replaceChildren(...[].concat(typeof kids === 'function' ? kids() : kids).flat().filter(Boolean));
-    };
-    d.open = openFolds.has(id);
-    if (d.open || eager) fill();
-    d.addEventListener('toggle', () => { if (d.open) { openFolds.add(id); fill(); } else openFolds.delete(id); });
-    return d;
+    return h('div', { class: 'card', 'data-fold': 'more-' + id }, h('h3', {}, title), ...[].concat(typeof kids === 'function' ? kids() : kids).flat().filter(Boolean));
   }
+
+  const UNITS = {
+    m_CaloriesBurned: 'kcal', m_CaloriesEaten: 'kcal', m_CaloriesExpendedToday: 'kcal', m_BodyTempHigh: '°C', m_BodyTempLow: '°C',
+    m_DistanceTravelledDay: 'm', m_DistanceTravelledNight: 'm', m_ConditionGained: '%', m_ConditionLost: '%',
+    m_ElapsedWarmTime: 'h', m_DayToAllowNextDose: 'day', m_CleanWaterConsumedLiters: 'L',
+  };
 
   function numRow(label, obj, key, rule, hint) {
     const box = h('input', { type: 'number', step: rule.integer ? 1 : (rule.step || 0.1), min: rule.min, max: rule.max, value: +num(obj[key]).toFixed(3), 'aria-label': label });
@@ -251,7 +323,8 @@
       if (rule.integer) v = Math.round(v);
       obj[key] = v;
     });
-    return h('div', { class: 'row' }, h('label', {}, label, hint ? h('small', {}, hint) : null), box);
+    const unit = typeof key === 'string' ? UNITS[key] : null;
+    return h('div', { class: 'row' }, h('label', {}, label, hint ? h('small', {}, hint) : null), box, unit ? h('span', { class: 'unit muted' }, unit) : null);
   }
 
   function listEditor(arr, o) {
@@ -277,7 +350,7 @@
   }
 
   function missing(sec) {
-    return h('p', { class: 'muted' }, TITLES[sec] + ': this save has no data for it.');
+    return h('p', { class: 'muted' }, 'Nothing saved for ' + TITLES[sec] + ' yet.');
   }
 
   function activeIn(o) {
@@ -341,12 +414,10 @@
       }
       viewRender();
     };
-    const rows = autoFields('m_WellFedSerialized', o, { labels: { m_Active: 'Well fed active', m_ElapsedHoursNotStarving: 'Hours without starving' } });
     return h('div', {},
       h('div', { class: 'row r3' }, h('label', {}, h('strong', {}, TITLES.m_WellFedSerialized)), h('span', { class: on ? 'tag ok' : 'tag' }, on ? 'active' : 'off'),
         h('button', { onclick: () => set(!on) }, on ? 'Turn off' : 'Turn on')),
-      h('p', { class: 'muted small' }, 'The game gives Well fed after 72 hours without starving. Turning it on sets the counter just above 72 hours and clears starvation.'),
-      ...rows);
+      h('p', { class: 'muted small' }, 'You get Well fed after 72 hours without starving. Turning it on sets that counter to 72 hours and stops the starving.'));
   }
 
   function bodyFold() {
@@ -368,61 +439,179 @@
   const ILLNESS_LABELS = { m_CauseLocID: 'Cause', m_CleanWaterConsumedLiters: 'Clean water counted (liters)', m_DayToAllowNextDose: 'Next dose allowed on day', m_ElapsedWarmTime: 'Time spent warm (hours)', m_Enabled: 'Scurvy can happen', m_Repaired: 'Save data repaired' };
 
   function illnessCard() {
-    const parts = [];
-    const idle = [];
-    for (const s of ILLNESS_SECS) {
-      const o = gs(s);
-      if (!o || typeof o !== 'object' || !Object.keys(o).length) { idle.push(TITLES[s]); continue; }
-      parts.push(sectionCard(s, { labels: ILLNESS_LABELS }));
+    const rows = [], raw = [];
+    let any = false;
+    for (const sec of ILLNESS_SECS) {
+      const o = gs(sec);
+      const has = !!o && typeof o === 'object' && Object.keys(o).length > 0;
+      const on = has && activeIn(o);
+      if (on) any = true;
+      rows.push(h('div', { class: 'row r3' }, h('label', {}, TITLES[sec]), h('span', { class: on ? 'tag warn' : 'tag ok' }, on ? 'active' : 'none'),
+        on ? h('button', { class: 'ghost', onclick: () => { cureObj(o); viewRender(); toast(TITLES[sec] + ' cured. Remember to save.'); } }, 'Cure') : h('span', {})));
+      if (has) {
+        const f = autoFields(sec, o, { labels: ILLNESS_LABELS });
+        if (f.length) raw.push(h('p', { class: 'small' }, h('strong', {}, TITLES[sec])), ...f);
+      }
     }
-    const any = ILLNESS_SECS.some((s) => { const o = gs(s); return o && typeof o === 'object' && activeIn(o); });
     return h('div', { class: 'card' },
-      h('h3', {}, 'Illnesses and conditions'),
-      ...parts,
-      idle.length ? h('p', { class: 'muted' }, 'Nothing stored right now for: ' + idle.join(', ') + '.') : null,
-      h('div', { class: 'actions' }, h('button', { disabled: !any, onclick: () => { for (const s of ILLNESS_SECS) { const o = gs(s); if (o && typeof o === 'object') cureObj(o); } viewRender(); toast('All illnesses cleared. Remember to save.'); } }, 'Clear all illnesses')));
+      h('h3', {}, 'Illnesses'),
+      ...rows,
+      h('div', { class: 'actions' }, h('button', { disabled: !any, onclick: () => { for (const sec of ILLNESS_SECS) { const o = gs(sec); if (o && typeof o === 'object') cureObj(o); } viewRender(); toast('All illnesses cured. Remember to save.'); } }, 'Cure all')),
+      raw.length ? h('details', { class: 'rawvals' }, h('summary', {}, 'Raw values'), ...raw) : null);
   }
 
   function statsFold() {
     const kids = [];
     const gsx = gs('m_PlayerGameStatsSerialized');
-    kids.push(gsx ? h('div', {}, h('p', { class: 'small' }, h('strong', {}, 'Game stats')), ...autoFields('m_PlayerGameStatsSerialized', gsx)) : missing('m_PlayerGameStatsSerialized'));
+    kids.push(gsx ? h('div', {}, ...autoFields('m_PlayerGameStatsSerialized', gsx)) : missing('m_PlayerGameStatsSerialized'));
     return fold('stats', 'Game stats', 'calories, distance and counters', kids);
   }
 
+  const TALE_NAMES = { sideTale1: 'Signal Void', sideTale2: 'Buried Echoes', sideTale3: 'Last Horizon' };
+  const OBJ_NAMES = {
+    Tale1_Transmitter1: 'Repair the transmitter at the Forsaken Airfield control tower', Tale1_Transmitter2: 'Repair the transmitter in Forlorn Muskeg',
+    Tale1_Transmitter3: 'Repair the transmitter in Pleasant Valley', Tale1_Transmitter4: 'Repair the transmitter in Mountain Town',
+    Tale1_BunkerBI: 'Investigate the signal in Bleak Inlet', Tale1_BunkerBISearch: 'Search Bunker Alpha',
+    Tale1_BunkerPV: 'Investigate the signal in Pleasant Valley', Tale1_BunkerPVSearch: 'Search Bunker Beta',
+    Tale1_BunkerHRV: 'Investigate the signal in Hushed River Valley', Tale1_BunkerHRVSearch: 'Search Bunker Gamma',
+    Tale1_FinalBunker: 'Search Forsaken Airfield for more bunkers', Tale1_FinalBunker_End: 'Search Bunker Omega',
+    Tale2_BonesSite: 'Look for signs of life with the shortwave', Tale2_ReadGeologistNote: 'Read the old journal entry',
+    Tale2_LocateCrashSite: 'Track down the crashed helicopter', Tale2_SearchCrashSite: 'Search the crash site',
+    Tale2_SearchConcentrator: 'Search the Concentrator and Headframe', Tale2_FoundRespirator: 'Find a respirator',
+    Tale2_SearchMine: 'Search the deepest corners of Langston Mine', Tale2_LocateUpperMineEntrance: 'Find the tracks up to the ridge',
+    Tale2_LocateUpperMineKey: 'Find a way into the Locked Zone', Tale2_UpperMineEnter: 'Get into the upper mine',
+    Tale2_LocateMachineRoom: 'Explore the Locked Zone', Tale2_SearchMachineRoom: 'Investigate the machine chamber and control room',
+    Tale2_CheckForemanReport: 'Check the foreman\'s reports for the Mine Gate Key', Tale2_ReturnToSurface: 'Return to the surface',
+    Tale2_LayBonesToRest: 'Lay the Security Chief\'s bones to rest',
+    Tale3_SearchWeatherStation: 'Search the weather station', Tale3_SearchWeatherStation_cache: 'Search its cache', Tale3_LocateForemanRefuge: 'Find the foreman\'s refuge',
+    Tale3_LocateRudigerHideout: 'Find Rüdiger\'s hideout', Tale3_SearchRudigerHideout: 'Search the hideout',
+    Tale3_LocateHighPeakPath: 'Find the path to the high peak', Tale3_ReachHighPeakSummit: 'Reach the summit',
+    Tale3_ReturnToOmegaBunker: 'Go back to Bunker Omega', Tale3_SearchHiddenRoom: 'Search the hidden room',
+  };
+  const OBJ_ORDER = {
+    sideTale1: ['Tale1_Transmitter1', 'Tale1_Transmitter2', 'Tale1_Transmitter3', 'Tale1_Transmitter4', 'Tale1_BunkerBI', 'Tale1_BunkerBISearch', 'Tale1_BunkerPV', 'Tale1_BunkerPVSearch', 'Tale1_BunkerHRV', 'Tale1_BunkerHRVSearch', 'Tale1_FinalBunker', 'Tale1_FinalBunker_End'],
+    sideTale2: ['Tale2_BonesSite', 'Tale2_ReadGeologistNote', 'Tale2_LocateCrashSite', 'Tale2_SearchCrashSite', 'Tale2_SearchConcentrator', 'Tale2_FoundRespirator', 'Tale2_SearchMine', 'Tale2_LocateUpperMineEntrance', 'Tale2_LocateUpperMineKey', 'Tale2_UpperMineEnter', 'Tale2_LocateMachineRoom', 'Tale2_SearchMachineRoom', 'Tale2_CheckForemanReport', 'Tale2_ReturnToSurface', 'Tale2_LayBonesToRest'],
+  };
+  const OPTIONAL = new Set(['Tale2_FoundRespirator']);
+  const objName = (id) => OBJ_NAMES[id] || human(String(id).replace(/^Tale\d+_/, ''));
+
+  function counterValue(name) {
+    if (!name) return null;
+    const raw = String((G() || {}).m_SandboxManagerSerialized instanceof Nested ? G().m_SandboxManagerSerialized.orig : (G() || {}).m_SandboxManagerSerialized || '');
+    const m = new RegExp(name.replace(/[^A-Za-z0-9_]/g, '') + '\\\\*"\\s*:\\s*\\{\\\\*"_value\\\\*"\\s*:\\s*(-?\\d+)').exec(raw);
+    return m ? Number(m[1]) : null;
+  }
+
+  function objCounter(o) {
+    const cur = counterValue(o.countCurrentBBName), max = counterValue(o.countRequiredBBName);
+    return cur !== null && max !== null && max > 0 ? { cur, max } : null;
+  }
+
+  function objRow(o, child) {
+    const c = objCounter(o);
+    const byCounter = !!c && c.cur >= c.max;
+    const isDone = () => !!o.completed || byCounter;
+    const btn = h('button', { type: 'button', class: 'obj' + (child ? ' child' : ''), role: 'checkbox', disabled: byCounter && !o.completed ? true : null, title: byCounter && !o.completed ? 'Done, the game counts this one by the items you found' : null },
+      h('span', { class: 'objtick', 'aria-hidden': 'true' }), h('span', {}, objName(o.objectiveID)),
+      OPTIONAL.has(o.objectiveID) ? h('small', { class: 'objtag' }, 'optional') : null,
+      c ? h('small', { class: 'objcount' }, c.cur + ' / ' + c.max) : null);
+    const paint = () => { btn.classList.toggle('done', isDone()); btn.setAttribute('aria-checked', String(isDone())); };
+    btn.addEventListener('click', () => { o.completed = !o.completed; paint(); btn.dispatchEvent(new CustomEvent('objchange', { bubbles: true })); });
+    btn.isDone = isDone;
+    paint();
+    return btn;
+  }
+
+  function taleCard(m, objs) {
+    const mine = objs.filter((o) => o.missionID === m.missionID);
+    const order = OBJ_ORDER[m.missionID] || [];
+    const sorted = order.map((id) => mine.find((o) => o.objectiveID === id)).filter(Boolean).concat(mine.filter((o) => !order.includes(o.objectiveID)));
+    const rows = sorted.map((o) => objRow(o, !!o.isChildObjective));
+    const bar = h('span', { class: 'talebar-fill' });
+    const count = h('span', { class: 'talecount' });
+    const state = h('span', { class: 'tag' });
+    const refresh = () => {
+      const done = rows.filter((r) => r.isDone()).length;
+      bar.style.width = (rows.length ? Math.round((done / rows.length) * 100) : 0) + '%';
+      count.textContent = done + ' / ' + rows.length;
+      const finished = m.completedSuccessfully === true;
+      state.className = 'tag ' + (finished ? 'ok' : m.isActive ? 'warn' : '');
+      state.textContent = finished ? 'Completed' : m.isActive ? 'Active' : 'Not started';
+    };
+    const card = h('div', { class: 'card tale' },
+      h('div', { class: 'talehead' }, h('div', {}, h('p', { class: 'talekicker' }, 'Tale'), h('h3', {}, TALE_NAMES[m.missionID] || human(m.missionID))), state),
+      h('div', { class: 'talebar' }, bar), h('div', { class: 'taleprog' }, count, h('span', { class: 'muted' }, 'objectives done')),
+      h('div', { class: 'objlist' }, rows),
+      h('div', { class: 'actions' },
+        h('button', { type: 'button', onclick: () => { for (const o of mine) o.completed = true; viewRender(); toast((TALE_NAMES[m.missionID] || 'Tale') + ' objectives done. Remember to save.'); } }, 'Complete all'),
+        check('Active', () => !!m.isActive, (x) => { m.isActive = x; refresh(); })));
+    card.addEventListener('objchange', refresh);
+    refresh();
+    return card;
+  }
+
+  function transmitterCard(tm) {
+    const tiles = [];
+    Object.keys(tm).forEach((guid) => {
+      const t = kid(tm, guid);
+      if (!t || typeof t !== 'object') return;
+      const parts = Array.isArray(t.m_RepairableItems) ? t.m_RepairableItems : [];
+      if (!parts.length && !('m_IsDiscovered' in t)) return;
+      const n = tiles.length + 1;
+      const fixed = parts.filter((p) => p.m_IsRepaired).length;
+      tiles.push(h('div', { class: 'txtile' },
+        h('div', { class: 'txhead' }, h('strong', {}, 'Transmitter ' + n), h('span', { class: 'tag ' + (t.m_IsFixed ? 'ok' : 'warn') }, t.m_IsFixed ? 'fixed' : 'broken')),
+        ...[['m_IsDiscovered', 'Discovered'], ['m_IsFixed', 'Fixed'], ['m_IsOpen', 'Open']].map(([k, l]) => check(l, () => !!t[k], (x) => { t[k] = x; viewRender(); })),
+        parts.length ? h('div', { class: 'txparts' }, h('span', { class: 'muted small' }, fixed + ' / ' + parts.length + ' parts repaired'),
+          fixed < parts.length ? h('button', { type: 'button', class: 'ghost', onclick: () => { for (const p of parts) p.m_IsRepaired = true; viewRender(); } }, 'Repair') : null) : null));
+    });
+    return h('div', { class: 'card' }, h('h3', {}, 'Transmitters'), tiles.length ? h('div', { class: 'txgrid' }, tiles) : h('p', { class: 'muted' }, 'No transmitters found yet.'));
+  }
+
   function missionsFold() {
-    const kids = [];
     const sm = gs('m_StoryMissionDataSerialized');
-    if (sm && Array.isArray(sm.m_MissionInfo)) {
-      kids.push(h('p', { class: 'small' }, h('strong', {}, 'Story missions')));
-      for (const m of sm.m_MissionInfo) kids.push(check(human(m.missionID || 'mission') + ' is active', () => !!m.isActive, (x) => { m.isActive = x; }));
+    const out = [];
+    if (sm && Array.isArray(sm.m_MissionInfo) && sm.m_MissionInfo.length) {
       const objs = Array.isArray(sm.m_ObjectiveInfo) ? sm.m_ObjectiveInfo : [];
-      for (const o of objs) if (!o.isChildObjective) kids.push(check(human(o.objectiveID || 'objective') + ' completed', () => !!o.completed, (x) => { o.completed = x; }));
-      kids.push(h('div', { class: 'actions' }, h('button', { disabled: !objs.length, onclick: () => { for (const o of objs) o.completed = true; viewRender(); toast('All objectives marked completed. Remember to save.'); } }, 'Complete all objectives')));
-    } else kids.push(missing('m_StoryMissionDataSerialized'));
+      out.push(h('div', { class: 'talegrid' }, sm.m_MissionInfo.map((m) => taleCard(m, objs))));
+    } else out.push(h('div', { class: 'card' }, h('h3', {}, 'Tales'), h('p', { class: 'muted' }, 'No tales started in this slot yet.')));
     const tm = gs('m_TransmitterSerialized');
-    if (tm) {
-      kids.push(h('p', { class: 'small' }, h('strong', {}, 'Transmitters')));
-      Object.keys(tm).forEach((guid, i) => {
-        const t = kid(tm, guid);
-        if (!t || typeof t !== 'object') return;
-        const name = 'Transmitter ' + (i + 1);
-        for (const [k, l] of [['m_IsDiscovered', 'discovered'], ['m_IsFixed', 'fixed'], ['m_IsOpen', 'open']]) if (k in t) kids.push(check(name + ' ' + l, () => !!t[k], (x) => { t[k] = x; }));
-        const parts = Array.isArray(t.m_RepairableItems) ? t.m_RepairableItems : [];
-        if (parts.length) kids.push(h('div', { class: 'row r3' }, h('label', {}, name + ' parts'), h('span', { class: parts.every((p) => p.m_IsRepaired) ? 'tag ok' : 'tag warn' }, parts.filter((p) => p.m_IsRepaired).length + ' / ' + parts.length + ' repaired'), h('button', { class: 'ghost', onclick: () => { for (const p of parts) p.m_IsRepaired = true; viewRender(); } }, 'Repair')));
-      });
-    } else kids.push(missing('m_TransmitterSerialized'));
-    return fold('missions', 'Missions and transmitters', 'story missions, transmitters', kids);
+    if (tm) out.push(transmitterCard(tm));
+    return out;
+  }
+
+  function finishTrade() {
+    const tr = gs(TRADER_SEC);
+    const inv = gs('m_Inventory_Serialized');
+    if (!tr || !inv || !Array.isArray(inv.m_SerializedItems)) { toast('No trade or inventory found in this file.', 'err'); return; }
+    const at = tr.m_ActiveTrade;
+    const states = at && Array.isArray(at.m_ExchangeStates) ? at.m_ExchangeStates : [];
+    const table = typeof TRADER_DATA !== 'undefined' && TRADER_DATA ? TRADER_DATA.items || {} : {};
+    const made = [];
+    try {
+      for (const s of states) {
+        const e = s && s.m_Exchange ? s.m_Exchange : {};
+        const prefab = table[e.m_GainedItem];
+        if (!prefab || !(catalogById()[prefab] || DATA.samples[prefab])) throw new Error('Whiteout does not know the item this trade gives (' + (e.m_TradeExchangeName || 'unknown') + ').');
+        const n = Math.max(1, Math.round(Number(e.m_GainedItemAmount) || 1));
+        for (let i = 0; i < n; i++) made.push(makeItem(prefab, null, 1));
+      }
+    } catch (err) { toast('Could not complete the trade: ' + err.message, 'err'); return; }
+    if (!made.length) { toast('There is no agreed trade to complete.'); return; }
+    inv.m_SerializedItems.push(...made);
+    completeTrade(tr, num(gs('m_TimeOfDay_Serialized').m_HoursPlayedNotPausedProxy));
+    viewRender();
+    toast('Trade completed: ' + made.length + ' item' + (made.length > 1 ? 's' : '') + ' added to the inventory. Remember to save.');
   }
 
   function traderCard() {
     const tr = gs(TRADER_SEC);
     if (!tr || typeof tr !== 'object') return null;
     const v = traderView(tr, traderNames(typeof TRADER_DATA !== 'undefined' ? TRADER_DATA : null, itemName));
-    const kids = [h('p', { class: 'small' }, h('strong', {}, 'Trader'))];
+    const kids = [];
     if ('m_SystemEnabled' in tr || !v.contacted) kids.push(check('Trader enabled in this slot', () => !!tr.m_SystemEnabled, (x) => { tr.m_SystemEnabled = x; }));
     if (!v.contacted) {
-      kids.push(h('p', { class: 'muted' }, 'The Trader has not been contacted in this slot yet, so there is nothing else to show.'));
+      kids.push(h('p', { class: 'muted' }, 'You haven\'t talked to the Trader in this slot yet.'));
       return h('div', { class: 'trader' }, kids);
     }
     const box = h('input', { type: 'number', step: 1, min: 0, value: v.trust, 'aria-label': 'Trader trust' });
@@ -433,7 +622,7 @@
       viewRender();
     });
     kids.push(h('div', { class: 'row' }, h('label', {}, 'Trust', h('small', {}, 'highest so far ' + v.highest)), box));
-    kids.push(h('p', { class: 'small muted' }, 'The range of trust the game accepts is not confirmed. Raising it also raises the highest trust.'));
+    if (v.lastTrade !== null) kids.push(h('p', { class: 'small muted' }, 'A trade has been completed in this slot. Last one at game hour ' + Math.round(v.lastTrade) + '.'));
     kids.push(h('p', { class: 'small muted' }, 'Contacts this aurora: ' + v.contacts + '. Conversations had: ' + v.talksHad + ', unlocked: ' + v.talksOpen + '. Special requests: ' + v.requests + '.'));
     const tradeRow = (t, extra) => h('div', { class: 'trade' },
       h('div', { class: 'trade-head' }, h('strong', {}, (t.amount > 1 ? t.amount + ' × ' : '') + t.gained), extra || h('span', { class: 'muted small' }, t.max > 1 ? 'up to ' + t.max + ' per trade' : 'one per trade')),
@@ -442,7 +631,8 @@
     if (v.active) {
       kids.push(h('p', { class: 'small' }, h('strong', {}, 'Agreed trade'), ' · exchange box in ' + (v.active.scene ? regionName(v.active.scene) : 'an unknown place')));
       for (const t of v.active.trades) kids.push(tradeRow(t, h('span', { class: t.handedOver ? 'tag ok' : 'tag warn' }, t.handedOver ? t.handedOver + ' handed over' : 'nothing handed over')));
-      kids.push(h('p', { class: 'muted small' }, 'Whiteout cannot complete a trade yet. Take the items to the exchange box in the game.'));
+      kids.push(h('div', { class: 'actions' }, h('button', { onclick: finishTrade }, 'Complete trade')));
+      kids.push(h('p', { class: 'muted small' }, 'You get the goods and keep what you would have paid. Not tried in the game yet.'));
     } else kids.push(h('p', { class: 'small muted' }, 'No trade is agreed right now.'));
     kids.push(h('p', { class: 'small' }, h('strong', {}, 'Offers this aurora'), ' · ' + v.offers.length));
     if (v.offers.length) for (const t of v.offers) kids.push(tradeRow(t));
@@ -451,14 +641,82 @@
   }
 
   function traderFold() {
-    return fold('trader', 'Trader', 'trust, the agreed trade and this aurora\'s offers', [traderCard() || missing(TRADER_SEC)]);
+    return h('div', { class: 'card', 'data-fold': 'more-trader' }, h('div', { class: 'cardhead' }, h('h3', {}, 'Trader'), h('span', { class: 'beta', title: 'This part is still experimental' }, 'Beta')), traderCard() || missing(TRADER_SEC));
   }
 
+  const NOTICE_KEY = 'whiteout.traderNotice';
+  function experimentalNotice() {
+    try { if (localStorage.getItem(NOTICE_KEY) === 'off') return; } catch (e) { }
+    const skip = h('input', { type: 'checkbox' });
+    const ok = h('button', { type: 'button', class: 'primary big' }, 'Got it');
+    const back = h('button', { type: 'button', class: 'big' }, 'Go back');
+    const dlg = h('dialog', { class: 'xnotice', 'aria-label': 'Experimental' }, h('div', { class: 'dlg' },
+      h('p', { class: 'xnotice-kicker' }, 'Trader'),
+      h('h2', { class: 'xnotice-title' }, 'Experimental'),
+      h('p', {}, 'The Trader part is still shaky. Changing trust or completing a trade hasn\'t been fully tested in the game, so the slot can end up in a weird state.'),
+      h('p', {}, 'Make a backup first. If something breaks you can always restore it.'),
+      h('label', { class: 'chk inline xnotice-skip' }, skip, h('span', {}, 'Don\'t show this again')),
+      h('div', { class: 'dlg-foot' }, ok, back)));
+    ok.addEventListener('click', () => { try { if (skip.checked) localStorage.setItem(NOTICE_KEY, 'off'); } catch (e) { } dlg.close(); });
+    back.addEventListener('click', () => { dlg.close(); state.moreTab = 'body'; viewRender(); });
+    dlg.addEventListener('close', () => dlg.remove());
+    document.body.append(dlg);
+    dlg.showModal();
+    ok.focus();
+  }
+
+  function featsCard() {
+    const ft = gs(FEATS_SEC);
+    if (!ft || typeof ft !== 'object') return null;
+    let mode = '';
+    try { mode = String((loadSec('info') || {}).m_XPMode || ''); } catch (e) { mode = ''; }
+    const kids = [];
+    const status = h('span', { class: 'tag ok' });
+    const refresh = () => {
+      const v = featsView(ft, mode);
+      const over = v.limit !== null && v.enabled > v.limit;
+      status.className = over ? 'tag warn' : 'tag ok';
+      status.textContent = v.enabled + (v.limit !== null ? ' of ' + v.limit + ' (' + v.mode + ')' : ' enabled');
+    };
+    kids.push(h('div', { class: 'row' }, h('label', {}, h('strong', {}, 'Feats enabled in this sandbox')), status));
+    kids.push(h('p', { class: 'small muted' }, 'The game lets you pick 5 feats on Pilgrim, 4 on Voyageur, 3 on Stalker and 2 on Interloper. The ids come from the game files.'));
+    for (const f of FEATS) {
+      kids.push(check(f.name, () => featsView(ft, mode).on.has(f.id), (x) => {
+        const before = featsView(ft, mode);
+        setFeat(ft, f.id, x);
+        refresh();
+        const now = featsView(ft, mode);
+        if (x && now.limit !== null && before.enabled <= now.limit && now.enabled > now.limit) featWarning(now);
+      }, f.effect));
+    }
+    const odd = featsView(ft, mode).unknown;
+    if (odd.length) kids.push(h('p', { class: 'small muted' }, 'Other feat ids in this save, left as they are: ' + odd.join(', ')));
+    refresh();
+    return h('div', {}, kids);
+  }
+
+  function featsFold() {
+    return fold('feats', 'Feats', 'feats enabled in this sandbox', [featsCard() || missing(FEATS_SEC)]);
+  }
+
+  const MORE_TABS = [
+    ['body', 'Body', () => [bodyFold()]],
+    ['missions', 'Tales', () => missionsFold()],
+    ['world', 'World', () => (window.tldWorld ? tldWorld.folds() : [])],
+    ['feats', 'Feats', () => [featsFold()]],
+    ['trader', 'Trader', () => [traderFold()]],
+    ['stats', 'Stats', () => [statsFold()]],
+  ];
+
   function viewMore() {
-    return h('div', {}, h('p', { class: 'muted' }, 'Everything here is saved with the slot and listed before saving. Values outside what the game accepts block the save.'), bodyFold(), missionsFold(), traderFold(), statsFold());
+    if (!MORE_TABS.some((t) => t[0] === state.moreTab)) state.moreTab = 'body';
+    const bar = h('div', { class: 'seg subtabs', role: 'group', 'aria-label': 'More sections' }, MORE_TABS.map(([id, label]) =>
+      h('button', { type: 'button', 'aria-pressed': String(id === state.moreTab), onclick: () => { const was = state.moreTab; state.moreTab = id; viewRender(); if (id === 'trader' && was !== 'trader') experimentalNotice(); } }, label)));
+    const cur = MORE_TABS.find((t) => t[0] === state.moreTab);
+    return h('div', {}, bar, ...cur[2]());
   }
 
   TABS.push(['more', 'More', viewMore]);
   const injury = TABS.find((x) => x[0] === 'injury');
-  if (injury) { const base = injury[2]; injury[2] = () => h('div', {}, base(), illnessCard()); }
+  if (injury) { const base = injury[2]; injury[2] = () => h('div', { class: 'grid2 even' }, base(), illnessCard()); }
 })();

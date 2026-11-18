@@ -335,7 +335,7 @@
     target = null; tool = null;
     syncTools(); renderTarget(); renderYou();
     cardBox.hidden = false; exitsBox.hidden = true;
-    cardBox.replaceChildren(h('p', { class: 'cardtext' }, h('strong', {}, 'Teleport set: '), done + '. Save your changes in the editor and load the game.'),
+    cardBox.replaceChildren(h('p', { class: 'cardtext' }, h('strong', {}, 'Teleport set: '), done + '. Save, then load the slot in the game.'),
       h('div', { class: 'cardbtns' }, h('button', { type: 'button', class: 'primary', onclick: () => { cardBox.hidden = true; renderExits(); window.tldMode.set('edit'); } }, 'Go to save'),
         h('button', { type: 'button', onclick: () => { cardBox.hidden = true; renderExits(); } }, 'Close')));
   }
@@ -347,11 +347,11 @@
     if (tool === 'pin') {
       cardBox.append(h('p', { class: 'cardtext' }, 'Click the map to add a pin.'), h('div', { class: 'cardbtns' }, h('button', { type: 'button', onclick: () => setTool(null) }, 'Done')));
     } else if (!target) {
-      cardBox.append(h('p', { class: 'cardtext' }, 'Click the map to choose the teleport destination.'), h('div', { class: 'cardbtns' }, h('button', { type: 'button', onclick: () => setTool(null) }, 'Cancel')));
+      cardBox.append(h('p', { class: 'cardtext' }, 'Click the map where you want to go.'), h('div', { class: 'cardbtns' }, h('button', { type: 'button', onclick: () => setTool(null) }, 'Cancel')));
     } else {
       const c = calOf(target.map), hgt = heightFor(c, target.x, target.z);
-      const note = !hgt.est ? 'There is no terrain data for this spot, so the height stays the same. If you fall, adjust the height on the Teleport tab.'
-        : hgt.far ? 'The nearest known point is far away, so the height may be wrong.' : '';
+      const note = !hgt.est ? 'No terrain saved here, so your height stays the same. If you fall, set it on the Teleport tab.'
+        : hgt.far ? 'The nearest saved point is far away, so the height may be off.' : '';
       cardBox.append(h('p', { class: 'cardtext' }, h('strong', {}, 'Teleport: '), nameOf(target.map) + ' · x ' + target.x.toFixed(0) + ', z ' + target.z.toFixed(0) + ' · height ' + hgt.y.toFixed(0) + ' m', note ? h('span', { class: 'cardnote' }, note) : null),
         h('div', { class: 'cardbtns' }, h('button', { type: 'button', class: 'primary', onclick: teleport }, 'Teleport here'), h('button', { type: 'button', onclick: () => setTool(null) }, 'Cancel')));
     }

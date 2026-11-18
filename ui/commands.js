@@ -44,6 +44,7 @@
   for (const [id, label] of [['player', 'Player'], ['inv', 'Inventory'], ['skills', 'Skills'], ['tele', 'Teleport'], ['injury', 'Afflictions']]) {
     ACT.add({ id: 'tab-' + id, title: 'Go to: ' + label, group: 'Tab', when: loaded, run: tab(id) });
   }
+  ACT.add({ id: 'restore-rescued', title: 'Restore the slot that disappeared', when: () => TD.isLinked() && !!(TD.D.rescued && TD.D.rescued.origin), run: () => TD.restoreRescued(TD.D.rescued) });
   ACT.add({
     id: 'backups', title: 'Backups: open slot', when: () => TD.isLinked(),
     run: async () => {
@@ -99,6 +100,7 @@
   function reset() {
     clearTimeout(U.timer);
     U.stack = []; U.idx = -1;
+    syncUndo();
     if (!loaded()) return;
     U.stack.push(snap(null)); U.idx = 0;
     recount();
@@ -157,7 +159,20 @@
     }
     if (n !== TD.D.changes) { TD.D.changes = n; TD.syncUi(); }
     pushMenuState();
+    syncUndo();
   }
+
+  function syncUndo() {
+    const g = $('#undoGroup');
+    if (!g) return;
+    g.hidden = !loaded();
+    $('#undoBtn').disabled = !loaded() || U.idx <= 0;
+    $('#redoBtn').disabled = !loaded() || U.idx >= U.stack.length - 1;
+  }
+  $('#undoBtn').title = 'Undo (' + MOD + 'Z)';
+  $('#redoBtn').title = 'Redo (' + MOD + '⇧Z)';
+  $('#undoBtn').addEventListener('click', () => undo());
+  $('#redoBtn').addEventListener('click', () => redo());
 
   let lastMenu = '';
   function pushMenuState() {

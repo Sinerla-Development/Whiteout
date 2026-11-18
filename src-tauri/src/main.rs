@@ -66,6 +66,7 @@ struct Guard {
 struct Rescued {
     name: String,
     path: String,
+    origin: String,
 }
 
 #[derive(Serialize)]
@@ -568,9 +569,10 @@ fn guard_check(app: &AppHandle, watched: &Path) {
         .and_then(|p| p.file_name())
         .map(|n| n.to_string_lossy().to_string())
         .unwrap_or_default();
+    let origin = state.path.as_ref().map(|p| p.to_string_lossy().to_string()).unwrap_or_default();
     match guard_step(&mut state, watched, &|| game_process_name(extra.as_deref()).is_some(), now) {
         Ok(Some(target)) => {
-            let _ = app.emit("save-rescued", Rescued { name, path: target.to_string_lossy().to_string() });
+            let _ = app.emit("save-rescued", Rescued { name, path: target.to_string_lossy().to_string(), origin });
         }
         Ok(None) => {}
         Err(e) => {

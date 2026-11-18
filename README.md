@@ -9,7 +9,7 @@
   <img src="https://img.shields.io/badge/macOS-C7294F?style=for-the-badge" alt="macOS">
   <img src="https://img.shields.io/badge/Linux-E6456C?style=for-the-badge" alt="Linux">
   <img src="https://img.shields.io/badge/License-MIT-2b2b2b?style=for-the-badge" alt="MIT license">
-  <img src="https://img.shields.io/badge/Version-0.1.0-E6A23C?style=for-the-badge" alt="Version 0.1.0">
+  <img src="https://img.shields.io/badge/Version-0.2.0-E6A23C?style=for-the-badge" alt="Version 0.2.0">
 </p>
 
 <p align="center"><a href="https://whiteout.sinerla.fi/">whiteout.sinerla.fi</a></p>
@@ -22,7 +22,8 @@
 You open a slot, change what you want and save. Whiteout backs up the old file first, every time, so you can always go back.
 
 1. Health, needs, inventory, skills, afflictions, time, aurora and the cougar
-2. A More tab for Well fed, nutrition, illnesses, missions, transmitters and game stats
+2. A More tab for Well fed, nutrition, tales, transmitters, prepper caches, feats, the Trader and game stats
+   A Journal tab that shows your days as charts (read only)
 3. A Trader card where you can change your trust and see the trade you agreed and what is on offer this aurora, with prices in plain names
 4. Teleport by coordinates, a bookmark or a click on the map
 5. A list of your changes before anything is written, and it won't let you save values that would break the slot
@@ -35,6 +36,10 @@ You open a slot, change what you want and save. Whiteout backs up the old file f
 12. Your pins and loadouts can live in iCloud, Google Drive, OneDrive or Dropbox, so they follow you to other computers
 
 Everything on the More tab has been tried in the game. [docs/MORE-FEATURES.md](docs/MORE-FEATURES.md) lists what each feature writes to the save and what was left out until it has been tested.
+
+## Make loadouts with an AI assistant
+
+Don't feel like adding every item by hand? Give an AI assistant like ChatGPT or Claude the page [docs/LOADOUTS.md](docs/LOADOUTS.md) and the item list [docs/loadout-items.csv](docs/loadout-items.csv), then tell it what you want, for example "a cold weather kit for Interloper". It writes a `whiteout-loadouts.json` file that you import in Whiteout. The page tells the assistant which item ids exist and how much of each item to give, so the file works on the first try.
 
 ## Screenshots
 

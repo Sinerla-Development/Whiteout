@@ -10,6 +10,7 @@ const ok = (c, m) => { if (c) pass++; else { fail++; console.log('FAIL: ' + m); 
 const text = JSON.stringify({
   m_WellFedSerialized: JSON.stringify({ m_Active: false, m_ElapsedHoursNotStarving: 10 }),
   m_PlayerGameStatsSerialized: JSON.stringify({ m_DistanceTravelledByDay: 12.5 }),
+  m_FeatsEnabledSerialized: JSON.stringify({ m_FeatsEnabledThisSandbox: ['FreeRunner'] }),
   m_TraderSerialized: require('./trader-fixture.json'),
 });
 const orig = E.parseJSON(text), live = E.parseJSON(text);
@@ -23,7 +24,7 @@ const run = (edit) => {
   return { out, diff: M.diff(M.snap(R(orig)), M.snap(R(g))), g };
 };
 
-ok([...M.snap(R(live)).keys()].filter((k) => !k.startsWith('m_TraderSerialized|')).length === 3, 'snapshot counts every leaf');
+ok([...M.snap(R(live)).keys()].filter((k) => !k.startsWith('m_TraderSerialized|') && !k.startsWith('m_FeatsEnabledSerialized|')).length === 3, 'snapshot counts every leaf');
 ok(run(() => {}).diff.length === 0 && run(() => {}).out.errors.length === 0, 'no edits give no changes');
 ok(E.ser(live) === E.ser(E.parseJSON(text)), 'unchanged sections serialize back identically');
 ok(!M.MORE_SECTIONS.includes('m_Wind_Serialized') && !M.MORE_SECTIONS.includes('m_AchievementManagerSerialized') && !M.MORE_SECTIONS.includes('m_RecipeBookState'), 'features that are not released are not part of the tab');
@@ -57,6 +58,28 @@ ok(run((gs) => { gs('m_TraderSerialized').m_CurrentTrust = 5; }).out.errors.leng
 ok(run((gs) => { M.setTrust(gs('m_TraderSerialized'), -1); }).out.errors.length === 1, 'negative trust blocks the save');
 r = run((gs) => { M.setTrust(gs('m_TraderSerialized'), 4); M.setTrust(gs('m_TraderSerialized'), 3); gs('m_TraderSerialized').m_HighestTrust = 3; });
 ok(r.diff.length === 0 && E.ser(r.g) === E.ser(E.parseJSON(text)), 'undoing the trust change restores the section');
+
+r = run((gs) => { M.setFeat(gs('m_FeatsEnabledSerialized'), 'ColdFusion', true); });
+ok(r.diff.length === 1 && /added: ColdFusion/.test(r.diff[0]) && r.out.errors.length === 0 && r.out.warnings.length === 0, 'enabling a feat is listed and accepted');
+r = run((gs) => { M.setFeat(gs('m_FeatsEnabledSerialized'), 'FreeRunner', false); });
+ok(r.diff.length === 1 && /removed: FreeRunner/.test(r.diff[0]), 'disabling a feat is listed');
+r = run((gs) => { const f = gs('m_FeatsEnabledSerialized'); M.setFeat(f, 'FreeRunner', true); M.setFeat(f, 'FreeRunner', true); });
+ok(r.diff.length === 0 && r.out.errors.length === 0, 'enabling a feat twice changes nothing');
+r = run((gs) => { const f = gs('m_FeatsEnabledSerialized'); for (const x of M.FEATS) M.setFeat(f, x.id, true); });
+ok(r.out.warnings.length === 1 && r.out.errors.length === 0, 'more feats than any difficulty allows warns');
+r = run((gs) => { M.setFeat(gs('m_FeatsEnabledSerialized'), 'Bad id!', true); });
+ok(r.out.errors.length === 1, 'a feat id with odd characters blocks the save');
+ok(M.featLimit('Voyageur') === 4 && M.featLimit('Interloper') === 2 && M.featLimit('Nope') === null, 'feat limits follow the difficulty');
+ok(M.featsView({ m_FeatsEnabledThisSandbox: ['FreeRunner', 'Mystery'] }, 'Stalker').unknown.join() === 'Mystery', 'unknown feat ids are reported');
+ok(M.featsView(null, '').enabled === 0, 'a missing feats section counts as none');
+ok(M.traderView({ m_CurrentTrust: 30, m_TimeLastTradeComplete: 1760.791 }, {}).lastTrade === 1760.791 && M.traderView({ m_CurrentTrust: 3 }, {}).lastTrade === null, 'the completed trade time is read when present');
+
+const tr1 = { m_CurrentTrust: 3, m_ActiveTrade: { m_ExchangeBoxScene: 'CoastalRegion', m_ExchangeStates: [{ m_Exchange: { m_TradeExchangeName: 'CookingOil', m_GainedItem: 'abc', m_GainedItemAmount: 2 }, m_ExchangedItems: [] }] } };
+const gains = M.completeTrade(tr1, 1760.79123);
+ok(gains.length === 1 && gains[0].guid === 'abc' && gains[0].amount === 2 && gains[0].name === 'CookingOil', 'completing a trade returns what it gives');
+ok(!('m_ActiveTrade' in tr1) && tr1.m_TimeLastTradeComplete === 1760.791, 'completing a trade clears the agreed trade and marks the time');
+const tr2 = { m_CurrentTrust: 3 };
+ok(M.completeTrade(tr2, 5).length === 0 && !('m_TimeLastTradeComplete' in tr2), 'without an agreed trade nothing changes');
 
 console.log(pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

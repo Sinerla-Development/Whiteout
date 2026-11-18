@@ -373,6 +373,30 @@
     return true;
   }
 
+  async function restoreRescued(r) {
+    if (!r || !r.path || !r.origin) { toast('There is no copy to restore.', 'err'); return false; }
+    const copy = await readStable(r.path);
+    if (!copy || !slotMeta(copy.bytes)) { toast('Could not read the saved copy.', 'err'); return false; }
+    if (state.outer && isDirty() && !(await ask({ title: 'Discard changes?', text: 'Unsaved changes in the open slot will be lost.', ok: 'Discard and restore', danger: true }))) return false;
+    let there = null;
+    try { there = await tld.invoke('stat_file', { path: r.origin }); } catch (e) { }
+    if (there && !(await ask({ title: 'Replace the slot in the game folder?', text: r.name + ' exists again. Restoring puts the old copy there, and the file that is there now stays in your backups.', ok: 'Replace', danger: true }))) return false;
+    openBytes(copy.bytes, r.name, null);
+    if (state.origBytes !== copy.bytes) return false;
+    D.file = { path: r.origin, name: r.name, bytes: copy.bytes, stamp: there || {} };
+    tld.invoke('guard_track', { path: r.origin, offsetMin: -new Date().getTimezoneOffset() }).catch(() => { });
+    D.prev = null; D.pending = null; D.ack = null;
+    hideBar();
+    D.lastBackup = null;
+    reviveAll();
+    syncUi();
+    viewRender();
+    if (window.tldMode && tldMode.slotOpened) tldMode.slotOpened();
+    if (window.tldHooks && tldHooks.opened) tldHooks.opened(false);
+    await saveToFile();
+    return true;
+  }
+
   async function pickNative() {
     if (!tld.dialog) return;
     try {
@@ -964,6 +988,12 @@
   }, true);
 
   window.tldSaveTime = () => (D.file && D.file.stamp && Number(D.file.stamp.modified)) || null;
+  window.tldReadSibling = async (name) => {
+    if (!D.file || !/^[A-Za-z0-9_.-]+$/.test(name)) return null;
+    const p = D.file.path;
+    const dir = p.slice(0, Math.max(p.lastIndexOf('/'), p.lastIndexOf('\\')));
+    try { return new Uint8Array(await tld.invoke('read_save', { path: joinPath(dir, name) })); } catch (e) { return null; }
+  };
 
   async function start() {
     await tld.ready;
@@ -1001,9 +1031,11 @@
       if (await confirmDiscard('Quit without saving?')) tld.invoke('quit_app').catch((e) => toast('Could not quit: ' + code(e), 'err'));
     });
     await tld.listen('saves-changed', () => { refreshList().catch(() => { }); });
-    await tld.listen('save-rescued', (ev) => {
+    await tld.listen('save-rescued', async (ev) => {
       const p = ev.payload || {};
+      D.rescued = p;
       toast('The slot ' + p.name + ' disappeared while the game was running. A copy was saved to ' + p.path, 'warn');
+      if (await ask({ title: 'Restore ' + p.name + '?', text: 'The game removed the slot, most likely because you died. Whiteout kept the last copy it saw. Restore it with full health and needs, and all afflictions cured? You can also do this later from the command palette.', ok: 'Restore' })) await restoreRescued(p);
     });
     await tld.listen('save-rescue-failed', (ev) => toast('Could not save a copy of the slot that disappeared (' + String(ev.payload).replace(/^io:\s*/, '') + ').', 'err'));
     await Promise.all([refreshList(), pollGame()]);
@@ -1041,5 +1073,5 @@
 
   start().catch((e) => { console.error(e); toast('Startup failed: ' + code(e), 'err'); });
 
-  window.tldDesktop = { D, choose, fillBackups, changeDataDir, renderDataBar, openPath, refreshList, pollGame, isDirty, isLinked, ask, askText, syncUi, renderSaveInfo, reviewChanges, openSlotsDlg, openBackups, writeRaw, formatCheck, saveToFile, saveCopy, pickNative, summaryOf, fmtDate, fmtSize, code, joinPath, readStable };
+  window.tldDesktop = { D, restoreRescued, choose, fillBackups, changeDataDir, renderDataBar, openPath, refreshList, pollGame, isDirty, isLinked, ask, askText, syncUi, renderSaveInfo, reviewChanges, openSlotsDlg, openBackups, writeRaw, formatCheck, saveToFile, saveCopy, pickNative, summaryOf, fmtDate, fmtSize, code, joinPath, readStable };
 })();

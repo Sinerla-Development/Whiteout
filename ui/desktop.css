@@ -54,14 +54,14 @@
   :root { --muted: #3a2f33; --placeholder: #4a3f43; --line: #7d7478; --line-strong: #4a3f43; --text: #000000; }
 }
 
-.viewbar { display: flex; align-items: center; gap: .5rem; justify-self: center; }
-.follow { display: inline-flex; align-items: center; gap: .5rem; white-space: nowrap; }
+.viewbar { position: relative; display: flex; align-items: center; gap: .5rem; justify-self: center; }
+.follow { position: absolute; right: calc(100% + .5rem); top: 50%; transform: translateY(-50%); display: inline-flex; align-items: center; gap: .5rem; white-space: nowrap; }
 .follow::before { content: ""; width: .5rem; height: .5rem; border-radius: 50%; background: currentColor; opacity: .55; }
 .follow[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); font-weight: 650; }
 .follow[aria-pressed="true"]:hover:not(:disabled) { background: var(--accent-hover); }
 .follow[aria-pressed="true"]::before { opacity: 1; animation: chip-pulse 1.8s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .follow[aria-pressed="true"]::before { animation: none; } }
-@media (max-width: 36rem) { .viewbar { justify-self: start; } }
+@media (max-width: 36rem) { .viewbar { justify-self: start; } .follow { position: static; transform: none; } }
 
 .toasts { position: fixed; inset: auto auto max(1.25rem, env(safe-area-inset-bottom)) 50%; margin: 0; padding: 0; border: 0; background: transparent; overflow: visible; color: inherit; z-index: 60; transform: translateX(-50%); display: flex; flex-direction: column; gap: .5rem; align-items: center; width: min(92vw, 30rem); pointer-events: none; }
 .toast-item { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .75rem; width: 100%; padding: .75rem .5rem .875rem .875rem; overflow: hidden; pointer-events: auto; cursor: pointer;

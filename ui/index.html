@@ -25,6 +25,10 @@
   <button type="button" id="followBtn" class="follow" aria-pressed="false" title="The map switches when the player changes region">Follow player</button>
   </div>
   <div class="top-actions">
+    <div class="undogroup" id="undoGroup" hidden>
+      <button id="undoBtn" type="button" class="ico iconbtn" title="Undo" aria-label="Undo" disabled></button>
+      <button id="redoBtn" type="button" class="ico iconbtn" title="Redo" aria-label="Redo" disabled></button>
+    </div>
     <span id="gameChip" class="gamechip" data-state="unknown" role="status" title="Checking whether the game is running"><span class="dot" aria-hidden="true"></span><span id="gameChipText">Game ?</span></span>
     <button id="slotsBtn" type="button" class="ico" title="Game saves" aria-label="Game saves"><span class="btn-label">Saves</span></button>
     <button id="settingsBtn" type="button" class="ico iconbtn" title="Settings" aria-label="Settings"></button>
@@ -360,9 +364,12 @@
 <script src="map.js"></script>
 <script src="data.js"></script>
 <script src="trader-data.js"></script>
+<script src="weight-data.js"></script>
 <script src="editor.js"></script>
 <script src="validate.js"></script>
+<script src="world.js"></script>
 <script src="more.js"></script>
+<script src="journal.js"></script>
 <script src="search.js"></script>
 <script src="toasts.js"></script>
 <script src="desktop.js"></script>
