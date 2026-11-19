@@ -106,6 +106,16 @@
   const COLORS = [['ember', 'Orange'], ['frost', 'Blue'], ['green', 'Green'], ['rose', 'Red'], ['violet', 'Violet']];
 
   const body = document.body, view = $('#mapView'), nav = $('#mapNav'), scrim = $('#mapScrim'), frame = $('#mapFrame'), layer = $('#mapLayer'), stage = view.querySelector('.mapstage');
+  const mapInsets = () => {
+    const fr = frame.getBoundingClientRect(), gap = 8;
+    const top = view.querySelector('.maptop');
+    const below = [$('#mapExits'), $('#mapCard')].filter((e) => e && !e.hidden && e.offsetParent);
+    const t = top ? Math.max(0, top.getBoundingClientRect().bottom - fr.top + gap) : 0;
+    const b = below.reduce((m, e) => Math.max(m, fr.bottom - e.getBoundingClientRect().top + gap), 0);
+    return { t, b };
+  };
+  const insetWatch = new ResizeObserver(() => { if (pz) pz.refit(); });
+  [view.querySelector('.maptop'), $('#mapExits'), $('#mapCard')].forEach((e) => { if (e) insetWatch.observe(e); });
   const navBtn = $('#mapNavBtn'), searchIn = $('#mapSearch'), list = $('#mapList'), exitsBox = $('#mapExits'), stateBox = $('#mapState'), cardBox = $('#mapCard'), noteBox = $('#mapNote');
   const pinBtn = $('#mapPinBtn'), teleBtn = $('#mapTeleBtn');
   const modeBtns = Array.from(document.querySelectorAll('.mode'));
@@ -557,7 +567,7 @@
       layer.replaceChildren(...parts);
       layer.style.width = w + 'px'; layer.style.height = hh + 'px';
       if (!pz) {
-        pz = PanZoom(frame, layer, { w, h: hh }, { pad: 24, onTap });
+        pz = PanZoom(frame, layer, { w, h: hh }, { pad: 24, onTap, insets: mapInsets });
         zoomCtl = PanZoom.controls(pz);
         stage.append(zoomCtl);
       } else pz.setSize(w, hh);
@@ -612,7 +622,7 @@
       const [w, hh] = place(img);
       spots(id); renderPins(); renderYou(); renderTarget();
       if (!pz) {
-        pz = PanZoom(frame, layer, { w, h: hh }, { pad: 24, onTap });
+        pz = PanZoom(frame, layer, { w, h: hh }, { pad: 24, onTap, insets: mapInsets });
         zoomCtl = PanZoom.controls(pz);
         stage.append(zoomCtl);
       } else pz.setSize(w, hh);
@@ -864,7 +874,7 @@
     },
   });
 
-  let remoteOn = false, remoteBack = null, remoteMenu = null;
+  let remoteOn = false, remoteMenu = null, remoteLast = null;
   const remoteBadge = h('div', { id: 'remoteBadge', class: 'remotebadge', role: 'status', hidden: true });
   document.body.append(remoteBadge);
   const remoteConns = () => (EXITS[S.id] || []).slice(0, 9);
@@ -883,13 +893,15 @@
     const conns = remoteConns();
     const you = remoteHere();
     exitsBox.hidden = false;
-    exitsBox.append(h('span', { class: 'lbl' }, 'Press a number'), h('div', { class: 'chips' },
+    const key = (window.tld.settings().mapRemoteKey) || 'Ctrl+Alt+W';
+    exitsBox.append(h('p', { class: 'remotehint' }, h('b', {}, 'Map remote on'), ' Arrows move the map, Page Up and Page Down zoom, ' + key + ' closes'),
+      h('span', { class: 'lbl' }, 'Press a number'), h('div', { class: 'chips' },
       conns.map((e, i) => h('button', { type: 'button', class: 'chip numchip', onclick: () => remoteDigit(i + 1) }, h('b', {}, String(i + 1)), e[4].map(nameOf).join(' / '))),
       h('button', { type: 'button', class: 'chip numchip', disabled: !you, onclick: () => remoteDigit(0) }, h('b', {}, '0'), you ? 'You: ' + nameOf(you) : 'You')));
   }
   function remoteBar() {
-    remoteBadge.hidden = !remoteOn;
-    remoteBadge.textContent = remoteOn ? 'Map remote on · ' + ((window.tld.settings().mapRemoteKey) || 'Ctrl+Alt+W') + ' to close' : '';
+    remoteBadge.hidden = true;
+    remoteBadge.textContent = '';
   }
   function remoteMenuOpen(to) {
     const anchor = layer.querySelectorAll('.spot-exit')[remoteMenuIndex] || layer.querySelector('.spot-exit');
@@ -916,24 +928,22 @@
   function remoteStart() {
     if (remoteOn) return;
     remoteOn = true;
-    remoteBack = { mode, id: S.id };
     remoteInvoke('remote_digits', { on: true });
     if (mode !== 'map') window.tldMode.set('map');
     const id = remoteHere();
-    if (id) go(id);
+    const keep = remoteLast && remoteLast.here === id && remoteLast.viewed;
+    if (keep) { if (keep !== S.id) go(keep); }
+    else if (id) go(id);
     remoteBar(); remoteNumber(); remoteChips();
   }
   function remoteStop() {
     if (!remoteOn) return;
     remoteOn = false;
     remoteMenu = null;
+    remoteLast = { here: remoteHere(), viewed: S.id };
     try { menu.hidePopover(); } catch (e) { }
     remoteInvoke('remote_digits', { on: false });
-    const back = remoteBack;
-    remoteBack = null;
     remoteBar(); remoteNumber();
-    if (back && back.mode === 'edit') { window.tldMode.set('edit'); }
-    else if (back && back.id && back.id !== S.id) go(back.id);
     renderExits();
   }
   const baseRenderExits = renderExits;
@@ -948,7 +958,13 @@
     remote(payload) {
       if (payload === 'toggle') { if (remoteOn) remoteStop(); else remoteStart(); return; }
       const m = /^digit:(\d)$/.exec(payload || '');
-      if (m) remoteDigit(Number(m[1]));
+      if (m) { remoteDigit(Number(m[1])); return; }
+      if (!remoteOn || !pz) return;
+      const PAN = { 'pan:up': [0, 1], 'pan:down': [0, -1], 'pan:left': [1, 0], 'pan:right': [-1, 0] };
+      if (PAN[payload]) { pz.panBy(PAN[payload][0] * 160, PAN[payload][1] * 160); return; }
+      if (payload === 'zoom:in') pz.zoomBy(1.4);
+      else if (payload === 'zoom:out') pz.zoomBy(1 / 1.4);
+      else if (payload === 'zoom:fit') pz.fit();
     },
     remoteStop,
     remoteActive: () => remoteOn,

@@ -9,6 +9,8 @@
 <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="editor.css">
 <link rel="stylesheet" href="desktop.css">
+<link rel="stylesheet" href="start.css">
+<link rel="stylesheet" href="theme.css">
 </head>
 <body>
 
@@ -67,23 +69,34 @@
 </div>
 <main id="main" tabindex="-1">
   <section id="welcome" class="welcome">
-    <div class="mark" aria-hidden="true"><svg viewBox="0 0 1024 1024" fill="currentColor" aria-hidden="true" focusable="false"><path d="M520 250C532 372 650 430 650 586c0 84-60 138-138 138s-138-54-138-138c0-74 46-114 72-186 16 42 36 62 52 52 14-42-4-120 22-202z"/><rect x="300" y="742" width="424" height="64" rx="32" transform="rotate(-9 512 774)"/><rect x="300" y="742" width="424" height="64" rx="32" transform="rotate(9 512 774)"/></svg></div>
-    <p class="eyebrow">The Long Dark</p>
-    <h1>Whiteout</h1>
-    <p class="lead">Edit your Long Dark saves. Every save makes a backup first.</p>
+    <header class="start-head">
+      <div class="mark" aria-hidden="true"><svg viewBox="0 0 1024 1024" fill="currentColor" aria-hidden="true" focusable="false"><path d="M520 250C532 372 650 430 650 586c0 84-60 138-138 138s-138-54-138-138c0-74 46-114 72-186 16 42 36 62 52 52 14-42-4-120 22-202z"/><rect x="300" y="742" width="424" height="64" rx="32" transform="rotate(-9 512 774)"/><rect x="300" y="742" width="424" height="64" rx="32" transform="rotate(9 512 774)"/></svg></div>
+      <div>
+        <h1>Whiteout</h1>
+        <p class="lead">Edit your Long Dark saves. Every save makes a backup first.</p>
+      </div>
+    </header>
     <div id="quickSaves" class="quick" hidden></div>
     <div class="startlinks">
-      <button id="openBtn" type="button" class="linkbtn">Open a slot file…</button>
-      <button id="openSrvBtn" type="button" class="linkbtn">Browse game saves</button>
+      <div class="start-drop">
+        <span class="start-dropico" aria-hidden="true"></span>
+        <div>
+          <p class="start-title">Open a save from elsewhere</p>
+          <p class="starthint">Drag a slot file into the window. It opens as a copy, and Save asks where to write it.</p>
+        </div>
+      </div>
+      <div class="start-actions">
+        <button id="openBtn" type="button" class="outline" title="Open a slot file">Open a slot file…<kbd id="openKbd">Ctrl+O</kbd></button>
+        <button id="openSrvBtn" type="button" class="outline">Browse game saves</button>
+      </div>
     </div>
-    <p class="muted small starthint">You can also drag a file into the window. It opens as a copy, and Save asks where to write it.</p>
     <details class="how">
       <summary>How it works</summary>
-    <div class="steps">
-      <div class="step"><span class="n">1</span><div>Watch your game while it runs. The open slot updates whenever the game saves. To get a fresh save, save in the game or change a video setting.</div></div>
-      <div class="step"><span class="n">2</span><div>Edit only after closing the game, so it cannot overwrite your changes or keep an old version in memory.</div></div>
-      <div class="step"><span class="n">3</span><div>Press Save to game. Whiteout makes a backup first. Then start the game and load the slot from the menu.</div></div>
-    </div>
+      <ol class="steps">
+        <li class="step"><span class="n">1</span><div><strong>Watch while you play.</strong> The open slot updates whenever the game saves. To get a fresh save, save in the game or change a video setting.</div></li>
+        <li class="step"><span class="n">2</span><div><strong>Close the game before editing.</strong> Otherwise it can overwrite your changes or keep an old version in memory.</div></li>
+        <li class="step"><span class="n">3</span><div><strong>Press Save to game.</strong> Whiteout makes a backup first. Then start the game and load the slot from the menu.</div></li>
+      </ol>
     </details>
   </section>
   <section id="app" hidden>
@@ -218,7 +231,7 @@
     <section class="setgroup">
       <h3>Map</h3>
       <label class="chk"><input type="checkbox" id="mapSteamChk"><span>Load map images from Steam<small class="muted">The images are stored on Steam, so Steam sees your IP address when they load. Off until you allow it.</small></span></label>
-      <label class="chk"><input type="checkbox" id="remoteChk"><span>Map remote while you play<small class="muted">A shortcut that works while the game has focus. It opens the map on your current region with numbers on the exits, and the number keys then open those maps. Press the shortcut again to return.</small></span></label>
+      <label class="chk"><input type="checkbox" id="remoteChk"><span>Map remote while you play<small class="muted">A shortcut that works while the game has focus. It opens the map on your current region with numbers on the exits, and the number keys then open those maps. Arrow keys move the map and Page Up and Page Down zoom. Press the shortcut again to stop. The map stays where you left it.</small></span></label>
       <div class="remoterow">
         <label for="remoteKey">Shortcut</label>
         <input id="remoteKey" type="text" readonly spellcheck="false" autocomplete="off" aria-describedby="remoteNote">

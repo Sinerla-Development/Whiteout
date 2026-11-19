@@ -1040,7 +1040,12 @@ fn set_close_to_tray(app: AppHandle, shell: State<'_, Shell>, enabled: bool) -> 
     set_tray(&app, &shell, enabled)
 }
 
-const REMOTE_DIGITS: [&str; 10] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+const REMOTE_KEYS: [(&str, &str); 19] = [
+    ("0", "digit:0"), ("1", "digit:1"), ("2", "digit:2"), ("3", "digit:3"), ("4", "digit:4"),
+    ("5", "digit:5"), ("6", "digit:6"), ("7", "digit:7"), ("8", "digit:8"), ("9", "digit:9"),
+    ("ArrowUp", "pan:up"), ("ArrowDown", "pan:down"), ("ArrowLeft", "pan:left"), ("ArrowRight", "pan:right"),
+    ("PageUp", "zoom:in"), ("PageDown", "zoom:out"), ("NumpadAdd", "zoom:in"), ("NumpadSubtract", "zoom:out"), ("Home", "zoom:fit"),
+];
 
 fn remote_emit(app: &AppHandle, payload: String) {
     let _ = app.emit("remote", payload);
@@ -1073,17 +1078,17 @@ fn remote_digits(app: AppHandle, remote: State<'_, Remote>, on: bool) -> Result<
         return Ok(());
     }
     if on {
-        for d in REMOTE_DIGITS {
-            let tag = d.to_string();
-            let _ = gs.on_shortcut(d, move |app, _, event| {
+        for (key, tag) in REMOTE_KEYS {
+            let tag = tag.to_string();
+            let _ = gs.on_shortcut(key, move |app, _, event| {
                 if event.state() == ShortcutState::Pressed {
-                    remote_emit(app, format!("digit:{tag}"));
+                    remote_emit(app, tag.clone());
                 }
             });
         }
     } else {
-        for d in REMOTE_DIGITS {
-            let _ = gs.unregister(d);
+        for (key, _) in REMOTE_KEYS {
+            let _ = gs.unregister(key);
         }
     }
     remote.digits.store(on, AtomicOrdering::SeqCst);

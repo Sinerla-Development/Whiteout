@@ -709,16 +709,27 @@
     box.hidden = false;
     const latest = D.entries[0];
     if (latest) {
-      const titleOf = (e) => { const i = D.info.get(e.name); return (i && i.meta && i.meta.title) || e.name; };
-      const meta = (D.info.get(latest.name) || {}).meta || {};
+      const metaOf = (e) => (D.info.get(e.name) || {}).meta || {};
+      const titleOf = (e) => metaOf(e).title || e.name;
+      const open = (e) => () => openPath(joinPath(D.dir, e.name));
+      const meta = metaOf(latest);
       const others = D.entries.slice(1, 4);
       box.replaceChildren(
         h('div', { class: 'startcard' },
-          h('p', { class: 'eyebrow' }, 'Latest save'),
-          h('h2', {}, titleOf(latest)),
-          h('p', { class: 'muted' }, [meta.mode, 'updated ' + ago(latest.modified)].filter(Boolean).join(' · ')),
-          h('button', { class: 'primary big', onclick: () => openPath(joinPath(D.dir, latest.name)) }, 'Open this save')),
-        others.length ? h('p', { class: 'startmore muted' }, 'Other slots: ', ...others.map((e) => h('button', { class: 'linkbtn', onclick: () => openPath(joinPath(D.dir, e.name)) }, titleOf(e)))) : null);
+          h('div', { class: 'start-cardhead' },
+            h('p', { class: 'eyebrow' }, 'Latest save'),
+            h('div', { class: 'start-titlerow' },
+              h('h2', {}, titleOf(latest)),
+              meta.mode ? h('span', { class: 'start-badge' }, meta.mode) : null),
+            h('p', { class: 'muted' }, 'Updated ' + ago(latest.modified))),
+          h('div', { class: 'start-cardfoot' },
+            h('button', { class: 'primary', onclick: open(latest) }, 'Open this save')),
+          others.length ? h('div', { class: 'startmore' },
+            h('p', { class: 'eyebrow' }, 'Other slots'),
+            h('ul', { class: 'start-list' }, ...others.map((e) => h('li', {},
+              h('button', { type: 'button', class: 'start-row', onclick: open(e) },
+                h('span', { class: 'start-rowname' }, titleOf(e)),
+                h('span', { class: 'start-rowmeta' }, [metaOf(e).mode, ago(e.modified)].filter(Boolean).join(' · '))))))) : null));
       return;
     }
     if (D.dir && !D.listError) {
@@ -1046,6 +1057,7 @@
   }
   const MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || '');
   const MOD = MAC ? '\u2318' : 'Ctrl+';
+  if ($('#openKbd')) $('#openKbd').textContent = MOD + 'O';
   const SHORTCUTS = { s: 'saveBtn', o: 'openBtn', ',': 'settingsBtn', '1': 'modeEdit', '2': 'modeMap', '3': 'followBtn' };
   const shortcutTarget = (id) => (id === 'modeEdit' ? $('.mode[data-mode="edit"]') : id === 'modeMap' ? $('.mode[data-mode="map"]') : $('#' + id));
   for (const [key, id] of Object.entries(SHORTCUTS)) {

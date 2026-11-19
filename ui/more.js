@@ -425,7 +425,7 @@
     kids.push(wellFedCard());
     const n = gs('m_PlayerNutritionSerialized');
     if (n && Array.isArray(n.m_NutrientNames)) {
-      kids.push(h('p', { class: 'small' }, h('strong', {}, 'Nutrition')));
+      kids.push(h('p', { class: 'sechead' }, 'Nutrition'));
       n.m_NutrientNames.forEach((name, i) => {
         const nice = human(String(name).replace(/^Nutrient_/, ''));
         if (Array.isArray(n.m_Amounts) && i < n.m_Amounts.length) kids.push(numRow(nice + ' stored', n.m_Amounts, i, RULES.m_Amounts));

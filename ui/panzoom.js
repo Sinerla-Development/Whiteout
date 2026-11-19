@@ -11,11 +11,12 @@
     const watchers = opt.onChange ? [opt.onChange] : [];
     const pad = opt.pad === undefined ? 16 : opt.pad;
     const box = () => host.getBoundingClientRect();
+    const inset = () => { const i = opt.insets ? opt.insets() : null; return { t: (i && i.t) || 0, b: (i && i.b) || 0, l: (i && i.l) || 0, r: (i && i.r) || 0 }; };
     const ready = () => { const r = box(); return r.width > 8 && r.height > 8; };
 
     function limits() {
-      const r = box();
-      fitS = Math.min((r.width - 2 * pad) / W, (r.height - 2 * pad) / H);
+      const r = box(), i = inset();
+      fitS = Math.min((r.width - i.l - i.r - 2 * pad) / W, (r.height - i.t - i.b - 2 * pad) / H);
       if (!(fitS > 0)) fitS = 0.1;
       minS = fitS * 0.7;
       maxS = Math.max(fitS * 10, 1.5);
@@ -35,8 +36,8 @@
     function fit(animate) {
       if (!ready()) return;
       limits();
-      const r = box();
-      s = fitS; tx = (r.width - W * s) / 2; ty = (r.height - H * s) / 2; moved = false;
+      const r = box(), i = inset();
+      s = fitS; tx = i.l + (r.width - i.l - i.r - W * s) / 2; ty = i.t + (r.height - i.t - i.b - H * s) / 2; moved = false;
       apply(animate);
     }
     function zoomAt(ns, cx, cy, animate) {
@@ -144,13 +145,15 @@
       get fitScale() { return fitS; },
       centerOn(x, y, scale, animate) {
         if (!ready()) return;
-        const r = box();
-        s = clamp(scale || s, minS, maxS); tx = r.width / 2 - x * s; ty = r.height / 2 - y * s; moved = true;
+        const r = box(), i = inset();
+        s = clamp(scale || s, minS, maxS); tx = i.l + (r.width - i.l - i.r) / 2 - x * s; ty = i.t + (r.height - i.t - i.b) / 2 - y * s; moved = true;
         apply(animate !== false);
       },
       fit: (animate) => fit(animate !== false),
       zoomBy(f) { const r = box(); zoomAt(s * f, r.width / 2, r.height / 2, true); },
+      panBy(dx, dy) { if (!ready()) return; tx += dx; ty += dy; moved = true; apply(true); },
       setSize(w, h) { W = w; H = h; moved = false; fit(false); },
+      refit() { if (!ready()) return; limits(); if (!moved) fit(false); else apply(false); },
       watch(fn) { watchers.push(fn); },
       destroy() {
         ro.disconnect();

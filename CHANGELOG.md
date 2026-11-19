@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.2.1
+
+### Changed
+
+- A new start screen with cards for the latest save, the other slots and opening a file from elsewhere
+- A calmer look across the app in the style of shadcn/ui: bordered cards, smaller and steadier text, new buttons, inputs, switches, sliders, badges, tabs and dialogs. The styles live in ui/theme.css
+- Map remote: arrow keys move the map and Page Up, Page Down and Home zoom while the remote is on. Pressing the shortcut again stops the remote and leaves the map where it is
+
+### Fixed
+
+- Links in the app open in the browser again
+- Map remote: opening it again keeps the map you left it on while you are still in the same region
+- Map remote: all the numbered exits show, wrapping to a second row when needed, and the help line no longer covers the map
+- The map fits between the toolbar and the bottom bar, so nothing covers it when it opens
+
 ## 0.2.0
 
 ### Added
