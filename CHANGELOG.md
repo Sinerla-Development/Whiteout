@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.2
+
+### Added
+
+- Inventory sorts by condition and weight both ways, from the Sort menu or by clicking the Item, Condition and Weight column headers
+
+### Fixed
+
+- The inventory list scrolls again
+- The tour names all seven sections
+
 ## 0.2.1
 
 ### Changed

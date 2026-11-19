@@ -58,7 +58,7 @@ input[type=checkbox]:focus-visible { outline: 0; box-shadow: 0 0 0 3px var(--rin
 .row, .card .chk:not(.inline) { border-top-color: var(--line); }
 .row label { font-weight: 500; }
 .row label small, .row label .muted, .chk small { font-weight: 400; font-size: .8125rem; color: var(--muted); }
-.tablecard { padding: 0; overflow: hidden; border: 1px solid var(--line); }
+.tablecard { padding: 0; overflow: auto; border: 1px solid var(--line); }
 
 .tag, .tag.warn, .tag.ok { display: inline-flex; align-items: center; gap: .25rem; padding: .125rem .5rem; font-size: .75rem; font-weight: 500; line-height: 1.25;
   border-radius: var(--r-sm); border: 1px solid transparent; }
@@ -124,3 +124,10 @@ header.top { background: color-mix(in srgb, var(--bg) 82%, transparent); border-
 .remotehint b { margin-right: .375rem; padding: .0625rem .375rem; border-radius: var(--r-sm); background: var(--accent); color: #fff; font-weight: 600; font-size: .75rem; }
 .mapexits:has(.numchip) .lbl { padding-top: .5rem; }
 .mapexits:has(.numchip) .chips { flex: 1 1 0; min-width: 0; flex-wrap: wrap; overflow: visible; }
+button.thsort { min-height: 0; padding: .125rem .375rem; margin-left: -.375rem; gap: .375rem; font: inherit; font-weight: inherit; color: inherit; background: transparent; border-radius: var(--r-sm); }
+button.thsort:hover:not(:disabled) { background: var(--fill); color: var(--text); }
+button.thsort.on { color: var(--text); }
+.thsort-ico { font-size: .75rem; opacity: .55; }
+button.thsort.on .thsort-ico { opacity: 1; }
+select:not([size]):not(.picker) { background-color: var(--card); }
+select option, select optgroup { background-color: var(--surface); color: var(--text); }

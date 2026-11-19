@@ -64,10 +64,10 @@
       body: 'The open slot with its name, mode, hours played and save time. Nothing is written until you press Save.',
     },
     {
-      title: 'Five sections',
+      title: 'Seven sections',
       needsSlot: true,
       target: () => visible($('#tabs')),
-      body: 'Player, Inventory, Skills, Teleport, Afflictions and More. ' + MOD + 'K opens a command palette that finds any action by name.',
+      body: 'Player, Inventory, Skills, Teleport, Afflictions, More and Journal. ' + MOD + 'K opens a command palette that finds any action by name.',
     },
     {
       title: 'Player',

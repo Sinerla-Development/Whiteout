@@ -811,7 +811,8 @@ function viewInventory() {
     h('option', { value: 'all' }, 'All categories'), Object.entries(CAT_LABEL).filter(([k]) => k !== 'Hidden').map(([k, v]) => h('option', { value: k }, v)));
   catFilter.value = state.invCat;
   const sortSel = h('select', { 'aria-label': 'Sort', onchange: (e) => { state.invSort = e.target.value; drawList(); } },
-    h('option', { value: 'order' }, 'Order: inventory'), h('option', { value: 'name' }, 'Name'), h('option', { value: 'cond' }, 'Condition, worst first'), h('option', { value: 'weight' }, 'Weight, heaviest first'));
+    h('option', { value: 'order' }, 'Order: inventory'), h('option', { value: 'name' }, 'Name'), h('option', { value: 'cond' }, 'Condition, worst first'), h('option', { value: 'cond-best' }, 'Condition, best first'),
+    h('option', { value: 'weight' }, 'Weight, heaviest first'), h('option', { value: 'weight-light' }, 'Weight, lightest first'));
   sortSel.value = state.invSort;
   const fixBtn = h('button', { onclick: () => {
     let n = 0;
@@ -846,6 +847,15 @@ function viewInventory() {
   const bar = h('div', { class: 'listbar' }, h('div', { class: 'listbar-search' }, search, catFilter, sortSel, count), h('div', { class: 'listbar-actions' }, cmpBtn, kitsBtn, fixBtn, clearBtn, addBtn));
 
   const list = h('div', { class: 'card tablecard' });
+  function sortTh(label, keys) {
+    const on = keys.indexOf(state.invSort);
+    const dir = on < 0 ? null : (keys[on] === 'name' || keys[on] === 'cond' || keys[on] === 'weight-light') ? 'ascending' : 'descending';
+    const next = on < 0 ? keys[0] : keys[(on + 1) % keys.length];
+    const btn = h('button', { type: 'button', class: 'thsort' + (on < 0 ? '' : ' on'), title: 'Sort by ' + label.toLowerCase(),
+      onclick: () => { state.invSort = on === 0 && keys.length === 1 ? 'order' : (on === keys.length - 1 && keys.length > 1 ? 'order' : next); sortSel.value = state.invSort; drawList(); } },
+      label, h('span', { class: 'thsort-ico', 'aria-hidden': 'true' }, dir === 'ascending' ? '↑' : dir === 'descending' ? '↓' : '↕'));
+    return h('th', { 'aria-sort': dir || 'none' }, btn);
+  }
   function drawList() {
     const q = state.itemFilter.trim().toLowerCase();
     const body = h('tbody', {});
@@ -853,7 +863,9 @@ function viewInventory() {
     const rows = items.map((it, idx) => ({ it, idx, nm: itemName(it.m_PrefabName), g: gearOf(it) })).filter((r) => r.g);
     if (state.invSort === 'name') rows.sort((a, b) => a.nm.localeCompare(b.nm, 'en'));
     else if (state.invSort === 'cond') rows.sort((a, b) => num(a.g.m_NormalizedCondition) - num(b.g.m_NormalizedCondition));
+    else if (state.invSort === 'cond-best') rows.sort((a, b) => num(b.g.m_NormalizedCondition) - num(a.g.m_NormalizedCondition));
     else if (state.invSort === 'weight') rows.sort((a, b) => (itemWeightKg(b.it) || 0) - (itemWeightKg(a.it) || 0));
+    else if (state.invSort === 'weight-light') rows.sort((a, b) => (itemWeightKg(a.it) || 0) - (itemWeightKg(b.it) || 0));
     for (const { it, idx, nm, g } of rows) {
       if (q && !(nm.toLowerCase().includes(q) || it.m_PrefabName.toLowerCase().includes(q))) continue;
       if (state.invCat !== 'all' && catOf(it.m_PrefabName) !== state.invCat) continue;
@@ -889,7 +901,7 @@ function viewInventory() {
           iconBtn('trash', 'Delete: ' + nm, 'rm', () => { items.splice(idx, 1); drawList(); updateCount(); }))));
     }
     const empty = !items.length ? 'The inventory is empty. Add an item above.' : (shown ? null : 'No matches.');
-    list.replaceChildren(h('table', {}, h('thead', {}, h('tr', {}, h('th', {}, 'Item'), h('th', {}, 'Condition'), h('th', {}, 'Amount'), h('th', {}, 'Weight'), h('th', {}, h('span', { class: 'sr-only' }, 'Actions')))), body), ...(empty ? [h('p', { class: 'muted pad' }, empty)] : []));
+    list.replaceChildren(h('table', {}, h('thead', {}, h('tr', {}, sortTh('Item', ['name']), sortTh('Condition', ['cond', 'cond-best']), h('th', {}, 'Amount'), sortTh('Weight', ['weight', 'weight-light']), h('th', {}, h('span', { class: 'sr-only' }, 'Actions')))), body), ...(empty ? [h('p', { class: 'muted pad' }, empty)] : []));
   }
 
   const addDlg = h('dialog', { 'aria-labelledby': 'addTitle' });
